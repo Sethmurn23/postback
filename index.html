@@ -1,0 +1,5980 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="theme-color" content="#17233c">
+<title>Postback — Job Reconciliation Workspace</title>
+<style>
+:root {
+  --navy-950: #0d1526;
+  --navy-900: #121d31;
+  --navy-800: #17233c;
+  --navy-700: #23324e;
+  --slate-700: #3f4b61;
+  --slate-600: #59667c;
+  --slate-500: #748095;
+  --slate-400: #9aa5b6;
+  --slate-300: #cbd3df;
+  --slate-200: #e2e7ef;
+  --slate-100: #eef2f7;
+  --slate-50: #f7f9fc;
+  --white: #ffffff;
+  --blue-700: #2256c7;
+  --blue-600: #2d67db;
+  --blue-500: #4b7fe3;
+  --blue-100: #e9f0ff;
+  --teal-700: #08786e;
+  --teal-600: #0b9487;
+  --teal-100: #dff7f2;
+  --green-700: #187746;
+  --green-600: #229254;
+  --green-100: #e2f6eb;
+  --amber-800: #8b4d06;
+  --amber-700: #a96008;
+  --amber-600: #ca7a10;
+  --amber-100: #fff1d6;
+  --red-700: #b62c3c;
+  --red-600: #d33b4d;
+  --red-100: #fde8eb;
+  --purple-700: #6f49bd;
+  --purple-100: #eee8fc;
+  --shadow-sm: 0 1px 2px rgba(13, 21, 38, .05);
+  --shadow-md: 0 8px 24px rgba(13, 21, 38, .09);
+  --shadow-lg: 0 18px 45px rgba(13, 21, 38, .15);
+  --radius-sm: 7px;
+  --radius-md: 11px;
+  --radius-lg: 16px;
+  --radius-xl: 22px;
+  --sidebar-width: 248px;
+  --header-height: 70px;
+  --font: Inter, ui-sans-serif, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+html {
+  min-height: 100%;
+  background: var(--slate-100);
+}
+
+body {
+  min-height: 100vh;
+  margin: 0;
+  color: var(--navy-900);
+  background: var(--slate-100);
+  font-family: var(--font);
+  font-size: 14px;
+  line-height: 1.5;
+  -webkit-font-smoothing: antialiased;
+}
+
+button,
+input,
+select,
+textarea {
+  font: inherit;
+}
+
+button,
+a,
+input,
+select,
+textarea {
+  -webkit-tap-highlight-color: transparent;
+}
+
+button {
+  cursor: pointer;
+}
+
+button:focus-visible,
+a:focus-visible,
+input:focus-visible,
+select:focus-visible,
+textarea:focus-visible,
+[tabindex]:focus-visible {
+  outline: 3px solid rgba(75, 127, 227, .28);
+  outline-offset: 2px;
+}
+
+a {
+  color: var(--blue-700);
+}
+
+svg {
+  display: block;
+}
+
+svg.icon {
+  width: 18px;
+  height: 18px;
+  flex: 0 0 auto;
+  fill: none;
+  stroke: currentColor;
+  stroke-width: 1.8;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+
+.hidden {
+  display: none !important;
+}
+
+.sr-only {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  border: 0;
+}
+
+.app-shell {
+  min-height: 100vh;
+}
+
+.sidebar {
+  position: fixed;
+  inset: 0 auto 0 0;
+  z-index: 50;
+  width: var(--sidebar-width);
+  color: var(--slate-300);
+  background:
+    radial-gradient(circle at 15% 5%, rgba(75, 127, 227, .17), transparent 25%),
+    linear-gradient(180deg, var(--navy-800), var(--navy-950));
+  border-right: 1px solid rgba(255, 255, 255, .06);
+  display: flex;
+  flex-direction: column;
+  transition: transform .22s ease;
+}
+
+.brand {
+  height: var(--header-height);
+  padding: 0 22px;
+  display: flex;
+  align-items: center;
+  gap: 11px;
+  border-bottom: 1px solid rgba(255, 255, 255, .08);
+}
+
+.brand-mark {
+  position: relative;
+  width: 34px;
+  height: 34px;
+  border-radius: 10px;
+  background: linear-gradient(135deg, #5f90ef, #2b62d0);
+  box-shadow: 0 7px 18px rgba(45, 103, 219, .35);
+  display: grid;
+  place-items: center;
+}
+
+.brand-mark::before,
+.brand-mark::after {
+  content: "";
+  position: absolute;
+  width: 13px;
+  height: 4px;
+  border: 2px solid white;
+  border-radius: 3px;
+}
+
+.brand-mark::before {
+  top: 8px;
+}
+
+.brand-mark::after {
+  bottom: 8px;
+  border-top: 0;
+}
+
+.brand-name {
+  color: var(--white);
+  font-size: 19px;
+  font-weight: 760;
+  letter-spacing: -.35px;
+}
+
+.badge-beta {
+  margin-left: 2px;
+  padding: 2px 6px;
+  color: #bcd0fb;
+  background: rgba(75, 127, 227, .14);
+  border: 1px solid rgba(143, 174, 240, .18);
+  border-radius: 999px;
+  font-size: 9px;
+  font-weight: 700;
+  letter-spacing: .07em;
+  text-transform: uppercase;
+}
+
+.sidebar-nav {
+  flex: 1;
+  padding: 18px 12px;
+  overflow-y: auto;
+}
+
+.nav-label {
+  margin: 14px 11px 7px;
+  color: #76849c;
+  font-size: 10px;
+  font-weight: 750;
+  letter-spacing: .11em;
+  text-transform: uppercase;
+}
+
+.nav-item {
+  width: 100%;
+  min-height: 42px;
+  margin: 2px 0;
+  padding: 0 11px;
+  color: #b8c3d5;
+  background: transparent;
+  border: 0;
+  border-radius: 8px;
+  display: flex;
+  align-items: center;
+  gap: 11px;
+  text-align: left;
+  transition: .16s ease;
+}
+
+.nav-item:hover {
+  color: white;
+  background: rgba(255, 255, 255, .055);
+}
+
+.nav-item.active {
+  color: white;
+  background: rgba(75, 127, 227, .17);
+  box-shadow: inset 3px 0 0 var(--blue-500);
+}
+
+.nav-item .icon {
+  color: #91a1b9;
+}
+
+.nav-item.active .icon {
+  color: #8eb3ff;
+}
+
+.nav-count {
+  min-width: 22px;
+  height: 20px;
+  padding: 0 6px;
+  margin-left: auto;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 999px;
+  color: #d9e3f4;
+  background: rgba(255, 255, 255, .1);
+  font-size: 11px;
+  font-weight: 700;
+}
+
+.sidebar-footer {
+  padding: 13px 12px 17px;
+  border-top: 1px solid rgba(255, 255, 255, .07);
+}
+
+.company-switcher {
+  width: 100%;
+  padding: 10px;
+  color: #dce4ef;
+  background: rgba(255, 255, 255, .045);
+  border: 1px solid rgba(255, 255, 255, .075);
+  border-radius: 9px;
+  display: flex;
+  align-items: center;
+  gap: 9px;
+  text-align: left;
+}
+
+.company-avatar {
+  width: 31px;
+  height: 31px;
+  display: grid;
+  place-items: center;
+  flex: 0 0 auto;
+  border-radius: 8px;
+  color: #cfe0ff;
+  background: #263d66;
+  font-size: 11px;
+  font-weight: 800;
+}
+
+.company-meta {
+  min-width: 0;
+  flex: 1;
+}
+
+.company-meta strong,
+.company-meta span {
+  display: block;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.company-meta strong {
+  color: #edf2fa;
+  font-size: 12px;
+}
+
+.company-meta span {
+  margin-top: 1px;
+  color: #7f8da3;
+  font-size: 10px;
+}
+
+.main {
+  min-height: 100vh;
+  margin-left: var(--sidebar-width);
+}
+
+.topbar {
+  position: sticky;
+  top: 0;
+  z-index: 35;
+  height: var(--header-height);
+  padding: 0 30px;
+  display: flex;
+  align-items: center;
+  gap: 18px;
+  background: rgba(255, 255, 255, .95);
+  border-bottom: 1px solid var(--slate-200);
+  backdrop-filter: blur(14px);
+}
+
+.mobile-menu {
+  display: none;
+}
+
+.page-heading {
+  min-width: 210px;
+}
+
+.page-heading h1 {
+  margin: 0;
+  color: var(--navy-900);
+  font-size: 18px;
+  font-weight: 750;
+  letter-spacing: -.3px;
+}
+
+.page-heading p {
+  margin: 1px 0 0;
+  color: var(--slate-500);
+  font-size: 11px;
+}
+
+.topbar-actions {
+  margin-left: auto;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.sync-state {
+  padding-right: 12px;
+  display: flex;
+  align-items: center;
+  gap: 7px;
+  color: var(--slate-500);
+  font-size: 11px;
+}
+
+.sync-dot {
+  width: 7px;
+  height: 7px;
+  border-radius: 50%;
+  background: var(--green-600);
+  box-shadow: 0 0 0 3px var(--green-100);
+}
+
+.sync-state.syncing .sync-dot {
+  background: var(--amber-600);
+  box-shadow: 0 0 0 3px var(--amber-100);
+  animation: pulse 1.1s infinite;
+}
+
+@keyframes pulse {
+  50% { opacity: .42; }
+}
+
+.notification-button {
+  position: relative;
+  width: 38px;
+  height: 38px;
+  display: grid;
+  place-items: center;
+  color: var(--slate-600);
+  background: var(--white);
+  border: 1px solid var(--slate-200);
+  border-radius: 9px;
+}
+
+.notification-button:hover {
+  color: var(--navy-900);
+  background: var(--slate-50);
+}
+
+.notification-dot {
+  position: absolute;
+  top: 7px;
+  right: 8px;
+  width: 7px;
+  height: 7px;
+  background: var(--red-600);
+  border: 2px solid white;
+  border-radius: 50%;
+}
+
+.avatar-button {
+  height: 38px;
+  padding: 0 4px 0 7px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  color: var(--navy-800);
+  background: transparent;
+  border: 0;
+  border-radius: 9px;
+}
+
+.avatar-button:hover {
+  background: var(--slate-50);
+}
+
+.avatar {
+  width: 30px;
+  height: 30px;
+  display: grid;
+  place-items: center;
+  color: white;
+  background: linear-gradient(145deg, #386cdb, #6747b2);
+  border-radius: 50%;
+  font-size: 11px;
+  font-weight: 750;
+}
+
+.avatar-button .chevron {
+  color: var(--slate-400);
+}
+
+.content {
+  width: 100%;
+  max-width: 1560px;
+  padding: 28px 30px 45px;
+  margin: 0 auto;
+}
+
+.view {
+  animation: viewIn .2s ease;
+}
+
+@keyframes viewIn {
+  from {
+    opacity: 0;
+    transform: translateY(4px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.view-header {
+  margin-bottom: 23px;
+  display: flex;
+  align-items: flex-start;
+  gap: 20px;
+}
+
+.view-title h2 {
+  margin: 0;
+  font-size: 25px;
+  font-weight: 770;
+  letter-spacing: -.7px;
+}
+
+.view-title p {
+  margin: 5px 0 0;
+  color: var(--slate-600);
+  font-size: 13px;
+}
+
+.view-actions {
+  margin-left: auto;
+  display: flex;
+  align-items: center;
+  gap: 9px;
+  flex-wrap: wrap;
+  justify-content: flex-end;
+}
+
+.btn {
+  min-height: 38px;
+  padding: 8px 13px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 7px;
+  border: 1px solid transparent;
+  border-radius: 8px;
+  font-size: 12px;
+  font-weight: 680;
+  line-height: 1;
+  transition: .15s ease;
+  white-space: nowrap;
+}
+
+.btn:disabled {
+  opacity: .55;
+  cursor: not-allowed;
+}
+
+.btn-primary {
+  color: white;
+  background: var(--blue-600);
+  border-color: var(--blue-600);
+  box-shadow: 0 2px 5px rgba(45, 103, 219, .18);
+}
+
+.btn-primary:hover:not(:disabled) {
+  background: var(--blue-700);
+  border-color: var(--blue-700);
+}
+
+.btn-secondary {
+  color: var(--slate-700);
+  background: white;
+  border-color: var(--slate-300);
+  box-shadow: var(--shadow-sm);
+}
+
+.btn-secondary:hover:not(:disabled) {
+  color: var(--navy-900);
+  background: var(--slate-50);
+  border-color: var(--slate-400);
+}
+
+.btn-quiet {
+  color: var(--slate-600);
+  background: transparent;
+  border-color: transparent;
+}
+
+.btn-quiet:hover:not(:disabled) {
+  color: var(--navy-900);
+  background: var(--slate-100);
+}
+
+.btn-danger {
+  color: var(--red-700);
+  background: var(--white);
+  border-color: #efbfc5;
+}
+
+.btn-danger:hover:not(:disabled) {
+  background: var(--red-100);
+}
+
+.btn-sm {
+  min-height: 31px;
+  padding: 6px 9px;
+  font-size: 11px;
+}
+
+.btn .icon {
+  width: 15px;
+  height: 15px;
+}
+
+.metric-grid {
+  margin-bottom: 19px;
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 14px;
+}
+
+.metric-card {
+  min-height: 132px;
+  padding: 18px 18px 15px;
+  background: white;
+  border: 1px solid var(--slate-200);
+  border-radius: var(--radius-md);
+  box-shadow: var(--shadow-sm);
+  position: relative;
+  overflow: hidden;
+}
+
+.metric-card::after {
+  content: "";
+  position: absolute;
+  right: -20px;
+  bottom: -38px;
+  width: 100px;
+  height: 100px;
+  border-radius: 50%;
+  background: var(--metric-tint, var(--blue-100));
+  opacity: .5;
+}
+
+.metric-top {
+  display: flex;
+  align-items: center;
+  gap: 9px;
+  color: var(--slate-600);
+  font-size: 11px;
+  font-weight: 650;
+}
+
+.metric-icon {
+  width: 29px;
+  height: 29px;
+  display: grid;
+  place-items: center;
+  border-radius: 8px;
+  color: var(--metric-color, var(--blue-700));
+  background: var(--metric-tint, var(--blue-100));
+}
+
+.metric-icon .icon {
+  width: 16px;
+  height: 16px;
+}
+
+.metric-value {
+  position: relative;
+  z-index: 1;
+  margin-top: 13px;
+  display: flex;
+  align-items: baseline;
+  gap: 7px;
+}
+
+.metric-value strong {
+  font-size: 27px;
+  font-weight: 770;
+  letter-spacing: -.7px;
+}
+
+.metric-change {
+  font-size: 10px;
+  font-weight: 700;
+}
+
+.metric-change.positive {
+  color: var(--green-700);
+}
+
+.metric-change.warning {
+  color: var(--amber-700);
+}
+
+.metric-change.neutral {
+  color: var(--slate-500);
+}
+
+.metric-detail {
+  position: relative;
+  z-index: 1;
+  margin-top: 4px;
+  color: var(--slate-500);
+  font-size: 10px;
+}
+
+.dashboard-grid {
+  display: grid;
+  grid-template-columns: minmax(0, 1.6fr) minmax(300px, .85fr);
+  gap: 17px;
+  margin-bottom: 17px;
+}
+
+.panel {
+  min-width: 0;
+  background: white;
+  border: 1px solid var(--slate-200);
+  border-radius: var(--radius-md);
+  box-shadow: var(--shadow-sm);
+}
+
+.panel-header {
+  min-height: 62px;
+  padding: 15px 18px;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  border-bottom: 1px solid var(--slate-200);
+}
+
+.panel-header h3 {
+  margin: 0;
+  color: var(--navy-900);
+  font-size: 14px;
+  font-weight: 730;
+}
+
+.panel-header p {
+  margin: 2px 0 0;
+  color: var(--slate-500);
+  font-size: 10px;
+}
+
+.panel-header-action {
+  margin-left: auto;
+}
+
+.link-button {
+  padding: 5px;
+  color: var(--blue-700);
+  background: transparent;
+  border: 0;
+  font-size: 11px;
+  font-weight: 680;
+}
+
+.link-button:hover {
+  text-decoration: underline;
+}
+
+.reconciliation-chart {
+  min-height: 286px;
+  padding: 19px 19px 16px;
+}
+
+.chart-summary {
+  display: flex;
+  align-items: flex-end;
+  gap: 15px;
+}
+
+.chart-amount {
+  font-size: 27px;
+  font-weight: 760;
+  letter-spacing: -.6px;
+}
+
+.chart-period {
+  padding-bottom: 4px;
+  color: var(--slate-500);
+  font-size: 10px;
+}
+
+.chart-area {
+  height: 184px;
+  margin-top: 17px;
+  display: flex;
+  align-items: stretch;
+  gap: 10px;
+}
+
+.y-axis {
+  width: 35px;
+  padding: 1px 0 21px;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  align-items: flex-end;
+  color: var(--slate-400);
+  font-size: 9px;
+}
+
+.chart-bars {
+  position: relative;
+  flex: 1;
+  min-width: 0;
+  display: grid;
+  grid-template-columns: repeat(7, minmax(18px, 1fr));
+  gap: 10px;
+  align-items: end;
+  border-bottom: 1px solid var(--slate-200);
+  background: repeating-linear-gradient(to bottom, var(--slate-100) 0, var(--slate-100) 1px, transparent 1px, transparent 41px);
+}
+
+.bar-column {
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-end;
+  align-items: center;
+  position: relative;
+}
+
+.bar-stack {
+  width: min(28px, 70%);
+  display: flex;
+  flex-direction: column-reverse;
+  border-radius: 4px 4px 1px 1px;
+  overflow: hidden;
+}
+
+.bar-segment {
+  min-height: 2px;
+}
+
+.bar-paid {
+  background: var(--blue-600);
+}
+
+.bar-outstanding {
+  background: #9bb8f1;
+}
+
+.bar-column:hover .bar-stack {
+  filter: brightness(.96);
+}
+
+.bar-label {
+  height: 21px;
+  padding-top: 6px;
+  color: var(--slate-500);
+  font-size: 9px;
+}
+
+.chart-legend {
+  margin-top: 13px;
+  display: flex;
+  gap: 17px;
+  color: var(--slate-500);
+  font-size: 9px;
+}
+
+.legend-item {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.legend-dot {
+  width: 7px;
+  height: 7px;
+  border-radius: 2px;
+  background: var(--blue-600);
+}
+
+.legend-dot.outstanding {
+  background: #9bb8f1;
+}
+
+.exception-list {
+  padding: 3px 0;
+}
+
+.exception-item {
+  padding: 13px 17px;
+  display: flex;
+  gap: 11px;
+  border-bottom: 1px solid var(--slate-100);
+}
+
+.exception-item:last-child {
+  border-bottom: 0;
+}
+
+.exception-item:hover {
+  background: var(--slate-50);
+}
+
+.exception-icon {
+  width: 32px;
+  height: 32px;
+  display: grid;
+  place-items: center;
+  flex: 0 0 auto;
+  border-radius: 8px;
+}
+
+.exception-icon.high {
+  color: var(--red-700);
+  background: var(--red-100);
+}
+
+.exception-icon.medium {
+  color: var(--amber-700);
+  background: var(--amber-100);
+}
+
+.exception-icon.low {
+  color: var(--blue-700);
+  background: var(--blue-100);
+}
+
+.exception-body {
+  min-width: 0;
+  flex: 1;
+}
+
+.exception-title-line {
+  display: flex;
+  align-items: center;
+  gap: 7px;
+}
+
+.exception-title {
+  color: var(--navy-900);
+  font-size: 11px;
+  font-weight: 700;
+}
+
+.exception-time {
+  margin-left: auto;
+  color: var(--slate-400);
+  font-size: 9px;
+}
+
+.exception-description {
+  margin: 3px 0 0;
+  color: var(--slate-500);
+  font-size: 10px;
+  display: -webkit-box;
+  -webkit-box-orient: vertical;
+  -webkit-line-clamp: 2;
+  overflow: hidden;
+}
+
+.exception-value {
+  color: var(--slate-600);
+  font-size: 10px;
+  font-weight: 700;
+}
+
+.health-list {
+  padding: 4px 17px 12px;
+}
+
+.integration-health {
+  min-height: 56px;
+  padding: 9px 0;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  border-bottom: 1px solid var(--slate-100);
+}
+
+.integration-health:last-child {
+  border-bottom: 0;
+}
+
+.integration-logo {
+  width: 32px;
+  height: 32px;
+  display: grid;
+  place-items: center;
+  flex: 0 0 auto;
+  border-radius: 8px;
+  color: white;
+  font-size: 11px;
+  font-weight: 800;
+}
+
+.integration-info {
+  min-width: 0;
+  flex: 1;
+}
+
+.integration-info strong,
+.integration-info span {
+  display: block;
+}
+
+.integration-info strong {
+  font-size: 11px;
+}
+
+.integration-info span {
+  margin-top: 2px;
+  color: var(--slate-500);
+  font-size: 9px;
+}
+
+.status-dot {
+  width: 7px;
+  height: 7px;
+  border-radius: 50%;
+  background: var(--green-600);
+}
+
+.status-dot.warning {
+  background: var(--amber-600);
+}
+
+.status-dot.offline {
+  background: var(--slate-400);
+}
+
+.activity-panel {
+  margin-bottom: 17px;
+}
+
+.activity-list {
+  padding: 1px 18px 5px;
+}
+
+.activity-item {
+  padding: 13px 0;
+  display: flex;
+  align-items: flex-start;
+  gap: 11px;
+  border-bottom: 1px solid var(--slate-100);
+}
+
+.activity-item:last-child {
+  border-bottom: 0;
+}
+
+.activity-symbol {
+  width: 27px;
+  height: 27px;
+  display: grid;
+  place-items: center;
+  flex: 0 0 auto;
+  border-radius: 50%;
+  color: var(--teal-700);
+  background: var(--teal-100);
+}
+
+.activity-symbol.match {
+  color: var(--blue-700);
+  background: var(--blue-100);
+}
+
+.activity-symbol.alert {
+  color: var(--amber-700);
+  background: var(--amber-100);
+}
+
+.activity-symbol .icon {
+  width: 14px;
+  height: 14px;
+}
+
+.activity-content {
+  min-width: 0;
+  flex: 1;
+}
+
+.activity-content p {
+  margin: 0;
+  color: var(--slate-700);
+  font-size: 11px;
+}
+
+.activity-content p strong {
+  color: var(--navy-900);
+}
+
+.activity-meta {
+  margin-top: 3px;
+  color: var(--slate-400);
+  font-size: 9px;
+}
+
+.filterbar {
+  padding: 13px 15px;
+  display: flex;
+  align-items: center;
+  gap: 9px;
+  flex-wrap: wrap;
+  background: white;
+  border: 1px solid var(--slate-200);
+  border-radius: var(--radius-md);
+  box-shadow: var(--shadow-sm);
+  margin-bottom: 13px;
+}
+
+.search-wrap {
+  position: relative;
+  min-width: 230px;
+  flex: 1;
+}
+
+.search-wrap .icon {
+  position: absolute;
+  top: 50%;
+  left: 11px;
+  width: 16px;
+  height: 16px;
+  color: var(--slate-400);
+  transform: translateY(-50%);
+  pointer-events: none;
+}
+
+.search-input {
+  width: 100%;
+  height: 36px;
+  padding: 8px 11px 8px 35px;
+  color: var(--navy-900);
+  background: var(--slate-50);
+  border: 1px solid var(--slate-200);
+  border-radius: 8px;
+  font-size: 11px;
+}
+
+.search-input::placeholder {
+  color: var(--slate-400);
+}
+
+.filter-select {
+  height: 36px;
+  min-width: 137px;
+  padding: 0 30px 0 10px;
+  color: var(--slate-700);
+  background: white;
+  border: 1px solid var(--slate-200);
+  border-radius: 8px;
+  font-size: 11px;
+}
+
+.filter-count {
+  margin-left: auto;
+  color: var(--slate-500);
+  font-size: 10px;
+}
+
+.segmented {
+  padding: 3px;
+  display: inline-flex;
+  align-items: center;
+  border-radius: 8px;
+  background: var(--slate-100);
+}
+
+.segment {
+  min-height: 30px;
+  padding: 0 11px;
+  color: var(--slate-600);
+  background: transparent;
+  border: 0;
+  border-radius: 6px;
+  font-size: 10px;
+  font-weight: 650;
+}
+
+.segment.active {
+  color: var(--navy-900);
+  background: white;
+  box-shadow: var(--shadow-sm);
+}
+
+.table-panel {
+  overflow: hidden;
+}
+
+.data-table-wrap {
+  overflow-x: auto;
+}
+
+.data-table {
+  width: 100%;
+  border-collapse: collapse;
+  white-space: nowrap;
+}
+
+.data-table th {
+  height: 43px;
+  padding: 0 15px;
+  color: var(--slate-500);
+  background: var(--slate-50);
+  border-bottom: 1px solid var(--slate-200);
+  font-size: 9px;
+  font-weight: 750;
+  letter-spacing: .045em;
+  text-align: left;
+  text-transform: uppercase;
+}
+
+.data-table td {
+  height: 62px;
+  padding: 10px 15px;
+  color: var(--slate-700);
+  border-bottom: 1px solid var(--slate-100);
+  font-size: 11px;
+  vertical-align: middle;
+}
+
+.data-table tbody tr:hover {
+  background: #fbfcfe;
+}
+
+.data-table tbody tr:last-child td {
+  border-bottom: 0;
+}
+
+.job-cell {
+  min-width: 205px;
+  white-space: normal;
+}
+
+.job-primary {
+  color: var(--navy-900);
+  font-size: 11px;
+  font-weight: 700;
+}
+
+.job-secondary {
+  margin-top: 2px;
+  color: var(--slate-500);
+  font-size: 9px;
+}
+
+.customer-cell strong,
+.customer-cell span {
+  display: block;
+}
+
+.customer-cell strong {
+  color: var(--navy-900);
+  font-size: 11px;
+}
+
+.customer-cell span {
+  margin-top: 2px;
+  color: var(--slate-500);
+  font-size: 9px;
+}
+
+.money {
+  color: var(--navy-900) !important;
+  font-weight: 700;
+  font-variant-numeric: tabular-nums;
+}
+
+.status-pill,
+.priority-pill,
+.match-pill,
+.source-pill {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  padding: 4px 7px;
+  border-radius: 999px;
+  font-size: 9px;
+  font-weight: 720;
+}
+
+.status-pill::before,
+.priority-pill::before,
+.match-pill::before {
+  content: "";
+  width: 5px;
+  height: 5px;
+  border-radius: 50%;
+  background: currentColor;
+}
+
+.status-pill.paid,
+.status-pill.matched,
+.status-pill.completed,
+.status-pill.connected {
+  color: var(--green-700);
+  background: var(--green-100);
+}
+
+.status-pill.outstanding,
+.status-pill.pending,
+.status-pill.syncing {
+  color: var(--amber-700);
+  background: var(--amber-100);
+}
+
+.status-pill.overdue,
+.status-pill.failed,
+.status-pill.unmatched,
+.status-pill.disconnected {
+  color: var(--red-700);
+  background: var(--red-100);
+}
+
+.status-pill.draft,
+.status-pill.review,
+.status-pill.needs-review {
+  color: var(--purple-700);
+  background: var(--purple-100);
+}
+
+.status-pill.incomplete,
+.status-pill.attention {
+  color: var(--slate-700);
+  background: var(--slate-100);
+}
+
+.priority-pill.high {
+  color: var(--red-700);
+  background: var(--red-100);
+}
+
+.priority-pill.medium {
+  color: var(--amber-700);
+  background: var(--amber-100);
+}
+
+.priority-pill.low {
+  color: var(--blue-700);
+  background: var(--blue-100);
+}
+
+.match-pill.exact {
+  color: var(--green-700);
+  background: var(--green-100);
+}
+
+.match-pill.fuzzy {
+  color: var(--amber-700);
+  background: var(--amber-100);
+}
+
+.match-pill.manual {
+  color: var(--purple-700);
+  background: var(--purple-100);
+}
+
+.row-actions {
+  display: flex;
+  align-items: center;
+  gap: 2px;
+}
+
+.icon-button {
+  width: 30px;
+  height: 30px;
+  display: inline-grid;
+  place-items: center;
+  color: var(--slate-500);
+  background: transparent;
+  border: 1px solid transparent;
+  border-radius: 7px;
+}
+
+.icon-button:hover {
+  color: var(--blue-700);
+  background: var(--blue-100);
+}
+
+.icon-button.danger:hover {
+  color: var(--red-700);
+  background: var(--red-100);
+}
+
+.icon-button .icon {
+  width: 15px;
+  height: 15px;
+}
+
+.table-footer {
+  min-height: 54px;
+  padding: 9px 15px;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  color: var(--slate-500);
+  border-top: 1px solid var(--slate-200);
+  font-size: 10px;
+}
+
+.pagination {
+  margin-left: auto;
+  display: flex;
+  gap: 5px;
+}
+
+.page-button {
+  min-width: 30px;
+  height: 30px;
+  padding: 0 8px;
+  color: var(--slate-600);
+  background: white;
+  border: 1px solid var(--slate-200);
+  border-radius: 7px;
+  font-size: 10px;
+}
+
+.page-button.active {
+  color: white;
+  background: var(--blue-600);
+  border-color: var(--blue-600);
+}
+
+.page-button:disabled {
+  opacity: .45;
+  cursor: not-allowed;
+}
+
+.exception-layout {
+  display: grid;
+  grid-template-columns: minmax(0, 1.55fr) minmax(315px, .75fr);
+  gap: 16px;
+  align-items: start;
+}
+
+.queue-list {
+  overflow: hidden;
+}
+
+.queue-toolbar {
+  padding: 13px 15px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  border-bottom: 1px solid var(--slate-200);
+}
+
+.queue-item {
+  width: 100%;
+  padding: 15px 16px;
+  display: flex;
+  gap: 12px;
+  background: white;
+  border: 0;
+  border-bottom: 1px solid var(--slate-100);
+  text-align: left;
+}
+
+.queue-item:last-child {
+  border-bottom: 0;
+}
+
+.queue-item:hover,
+.queue-item.selected {
+  background: var(--slate-50);
+}
+
+.queue-item.selected {
+  box-shadow: inset 3px 0 0 var(--blue-600);
+}
+
+.queue-priority {
+  width: 7px;
+  min-height: 48px;
+  margin-top: 2px;
+  border-radius: 999px;
+  background: var(--amber-600);
+}
+
+.queue-priority.high {
+  background: var(--red-600);
+}
+
+.queue-priority.low {
+  background: var(--blue-500);
+}
+
+.queue-main {
+  min-width: 0;
+  flex: 1;
+}
+
+.queue-top {
+  display: flex;
+  align-items: center;
+  gap: 7px;
+}
+
+.queue-title {
+  color: var(--navy-900);
+  font-size: 11px;
+  font-weight: 730;
+}
+
+.queue-id {
+  margin-left: auto;
+  color: var(--slate-400);
+  font-size: 9px;
+}
+
+.queue-description {
+  margin: 5px 0 7px;
+  color: var(--slate-600);
+  font-size: 10px;
+  line-height: 1.45;
+}
+
+.queue-meta {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  color: var(--slate-400);
+  font-size: 9px;
+}
+
+.queue-meta span {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+}
+
+.queue-meta .icon {
+  width: 11px;
+  height: 11px;
+}
+
+.queue-amount {
+  align-self: center;
+  color: var(--navy-900);
+  font-size: 11px;
+  font-weight: 750;
+}
+
+.inspector {
+  position: sticky;
+  top: calc(var(--header-height) + 20px);
+  overflow: hidden;
+}
+
+.inspector-header {
+  padding: 17px;
+  border-bottom: 1px solid var(--slate-200);
+}
+
+.inspector-header-top {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.inspector-header h3 {
+  margin: 10px 0 3px;
+  font-size: 15px;
+}
+
+.inspector-header p {
+  margin: 0;
+  color: var(--slate-500);
+  font-size: 10px;
+}
+
+.inspector-section {
+  padding: 15px 17px;
+  border-bottom: 1px solid var(--slate-100);
+}
+
+.inspector-section h4 {
+  margin: 0 0 10px;
+  color: var(--slate-700);
+  font-size: 10px;
+  font-weight: 750;
+  letter-spacing: .04em;
+  text-transform: uppercase;
+}
+
+.comparison-list {
+  display: grid;
+  gap: 9px;
+}
+
+.comparison-row {
+  display: grid;
+  grid-template-columns: 70px 1fr 14px 1fr;
+  gap: 6px;
+  align-items: center;
+  font-size: 9px;
+}
+
+.comparison-row .label {
+  color: var(--slate-500);
+}
+
+.comparison-value {
+  min-width: 0;
+  padding: 6px 7px;
+  overflow: hidden;
+  color: var(--slate-700);
+  background: var(--slate-50);
+  border: 1px solid var(--slate-200);
+  border-radius: 6px;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.comparison-value.conflict {
+  color: var(--red-700);
+  background: var(--red-100);
+  border-color: #f6cbd1;
+}
+
+.compare-symbol {
+  color: var(--slate-400);
+  text-align: center;
+}
+
+.inspector-note {
+  margin: 0;
+  padding: 10px;
+  color: var(--blue-700);
+  background: var(--blue-100);
+  border-radius: 7px;
+  font-size: 9px;
+  line-height: 1.5;
+}
+
+.inspector-actions {
+  padding: 15px 17px;
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 8px;
+}
+
+.inspector-actions .btn:first-child {
+  grid-column: 1 / -1;
+}
+
+.integration-grid {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 14px;
+}
+
+.integration-card {
+  padding: 17px;
+  background: white;
+  border: 1px solid var(--slate-200);
+  border-radius: var(--radius-md);
+  box-shadow: var(--shadow-sm);
+}
+
+.integration-card-head {
+  display: flex;
+  align-items: flex-start;
+  gap: 11px;
+}
+
+.integration-card-logo {
+  width: 43px;
+  height: 43px;
+  display: grid;
+  place-items: center;
+  flex: 0 0 auto;
+  color: white;
+  border-radius: 10px;
+  font-size: 14px;
+  font-weight: 800;
+}
+
+.integration-card h3 {
+  margin: 1px 0 1px;
+  font-size: 13px;
+}
+
+.integration-card-subtitle {
+  color: var(--slate-500);
+  font-size: 9px;
+}
+
+.integration-card .status-pill {
+  margin-left: auto;
+}
+
+.integration-stats {
+  margin: 16px 0;
+  padding: 11px 0;
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  border-top: 1px solid var(--slate-100);
+  border-bottom: 1px solid var(--slate-100);
+}
+
+.integration-stat {
+  text-align: center;
+  border-right: 1px solid var(--slate-100);
+}
+
+.integration-stat:last-child {
+  border-right: 0;
+}
+
+.integration-stat strong,
+.integration-stat span {
+  display: block;
+}
+
+.integration-stat strong {
+  color: var(--navy-900);
+  font-size: 13px;
+}
+
+.integration-stat span {
+  margin-top: 2px;
+  color: var(--slate-500);
+  font-size: 8px;
+}
+
+.integration-card-footer {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+}
+
+.last-sync {
+  color: var(--slate-500);
+  font-size: 9px;
+}
+
+.integration-card-footer .btn {
+  margin-left: auto;
+}
+
+.integration-section-title {
+  margin: 26px 0 12px;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.integration-section-title:first-child {
+  margin-top: 0;
+}
+
+.integration-section-title h3 {
+  margin: 0;
+  font-size: 14px;
+}
+
+.integration-section-title span {
+  color: var(--slate-500);
+  font-size: 10px;
+}
+
+.alert-card {
+  padding: 16px 17px;
+  display: flex;
+  gap: 12px;
+  background: white;
+  border: 1px solid var(--slate-200);
+  border-radius: var(--radius-md);
+  box-shadow: var(--shadow-sm);
+}
+
+.alert-card-icon {
+  width: 35px;
+  height: 35px;
+  display: grid;
+  place-items: center;
+  flex: 0 0 auto;
+  color: var(--blue-700);
+  background: var(--blue-100);
+  border-radius: 9px;
+}
+
+.alert-card-body {
+  min-width: 0;
+  flex: 1;
+}
+
+.alert-card-body h3 {
+  margin: 0 0 3px;
+  font-size: 12px;
+}
+
+.alert-card-body p {
+  margin: 0 0 9px;
+  color: var(--slate-500);
+  font-size: 10px;
+}
+
+.toggle-list {
+  display: grid;
+  gap: 9px;
+}
+
+.toggle-row {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.toggle-row label {
+  flex: 1;
+  color: var(--slate-700);
+  font-size: 10px;
+}
+
+.switch {
+  position: relative;
+  width: 36px;
+  height: 20px;
+  display: inline-block;
+}
+
+.switch input {
+  position: absolute;
+  opacity: 0;
+  width: 1px;
+  height: 1px;
+}
+
+.switch-track {
+  position: absolute;
+  inset: 0;
+  background: var(--slate-300);
+  border-radius: 999px;
+  transition: .15s ease;
+}
+
+.switch-track::after {
+  content: "";
+  position: absolute;
+  top: 3px;
+  left: 3px;
+  width: 14px;
+  height: 14px;
+  background: white;
+  border-radius: 50%;
+  box-shadow: 0 1px 3px rgba(13, 21, 38, .25);
+  transition: .15s ease;
+}
+
+.switch input:checked + .switch-track {
+  background: var(--blue-600);
+}
+
+.switch input:checked + .switch-track::after {
+  transform: translateX(16px);
+}
+
+.switch input:focus-visible + .switch-track {
+  outline: 3px solid rgba(75, 127, 227, .25);
+  outline-offset: 2px;
+}
+
+.report-grid {
+  display: grid;
+  grid-template-columns: minmax(0, 1.45fr) minmax(300px, .75fr);
+  gap: 16px;
+  margin-bottom: 16px;
+}
+
+.report-kpis {
+  padding: 17px;
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 12px;
+}
+
+.report-kpi {
+  padding-right: 12px;
+  border-right: 1px solid var(--slate-200);
+}
+
+.report-kpi:last-child {
+  border-right: 0;
+}
+
+.report-kpi span,
+.report-kpi strong,
+.report-kpi small {
+  display: block;
+}
+
+.report-kpi span {
+  color: var(--slate-500);
+  font-size: 9px;
+}
+
+.report-kpi strong {
+  margin-top: 4px;
+  font-size: 19px;
+  letter-spacing: -.3px;
+}
+
+.report-kpi small {
+  margin-top: 4px;
+  color: var(--green-700);
+  font-size: 9px;
+}
+
+.report-breakdown {
+  padding: 17px;
+}
+
+.report-breakdown-row {
+  margin-bottom: 14px;
+}
+
+.report-breakdown-top {
+  margin-bottom: 6px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  font-size: 10px;
+}
+
+.report-breakdown-top span {
+  color: var(--slate-600);
+}
+
+.report-breakdown-top strong {
+  color: var(--navy-900);
+}
+
+.progress-track {
+  height: 8px;
+  overflow: hidden;
+  background: var(--slate-100);
+  border-radius: 999px;
+}
+
+.progress-fill {
+  height: 100%;
+  border-radius: inherit;
+  background: var(--blue-600);
+}
+
+.progress-fill.green {
+  background: var(--green-600);
+}
+
+.progress-fill.amber {
+  background: var(--amber-600);
+}
+
+.settings-layout {
+  display: grid;
+  grid-template-columns: 205px minmax(0, 740px);
+  gap: 18px;
+  align-items: start;
+}
+
+.settings-nav {
+  padding: 7px;
+  position: sticky;
+  top: calc(var(--header-height) + 20px);
+}
+
+.settings-nav button {
+  width: 100%;
+  min-height: 38px;
+  padding: 0 10px;
+  color: var(--slate-600);
+  background: transparent;
+  border: 0;
+  border-radius: 7px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  text-align: left;
+  font-size: 10px;
+  font-weight: 650;
+}
+
+.settings-nav button:hover {
+  background: var(--slate-50);
+}
+
+.settings-nav button.active {
+  color: var(--blue-700);
+  background: var(--blue-100);
+}
+
+.settings-section {
+  margin-bottom: 15px;
+  overflow: hidden;
+}
+
+.settings-section-header {
+  padding: 16px 18px;
+  border-bottom: 1px solid var(--slate-200);
+}
+
+.settings-section-header h3 {
+  margin: 0;
+  font-size: 13px;
+}
+
+.settings-section-header p {
+  margin: 3px 0 0;
+  color: var(--slate-500);
+  font-size: 10px;
+}
+
+.settings-form {
+  padding: 18px;
+}
+
+.form-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 15px;
+}
+
+.form-grid.three {
+  grid-template-columns: repeat(3, 1fr);
+}
+
+.field {
+  min-width: 0;
+}
+
+.field.full {
+  grid-column: 1 / -1;
+}
+
+.field label,
+.field-label {
+  margin-bottom: 6px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+  color: var(--slate-700);
+  font-size: 10px;
+  font-weight: 680;
+}
+
+.required {
+  color: var(--red-600);
+}
+
+.field-hint {
+  margin-top: 5px;
+  color: var(--slate-500);
+  font-size: 9px;
+}
+
+.input,
+.select,
+.textarea {
+  width: 100%;
+  color: var(--navy-900);
+  background: white;
+  border: 1px solid var(--slate-300);
+  border-radius: 7px;
+  font-size: 11px;
+  transition: border-color .15s ease, box-shadow .15s ease;
+}
+
+.input,
+.select {
+  height: 38px;
+  padding: 0 10px;
+}
+
+.textarea {
+  min-height: 88px;
+  padding: 10px;
+  line-height: 1.45;
+  resize: vertical;
+}
+
+.input::placeholder,
+.textarea::placeholder {
+  color: var(--slate-400);
+}
+
+.input:hover,
+.select:hover,
+.textarea:hover {
+  border-color: var(--slate-400);
+}
+
+.input:focus,
+.select:focus,
+.textarea:focus {
+  border-color: var(--blue-500);
+  outline: 0;
+  box-shadow: 0 0 0 3px rgba(75, 127, 227, .12);
+}
+
+.input.invalid,
+.select.invalid,
+.textarea.invalid {
+  border-color: var(--red-600);
+  box-shadow: 0 0 0 3px rgba(211, 59, 77, .09);
+}
+
+.error-text {
+  min-height: 14px;
+  margin-top: 4px;
+  color: var(--red-700);
+  font-size: 9px;
+}
+
+.input-prefix {
+  position: relative;
+}
+
+.input-prefix .input {
+  padding-left: 25px;
+}
+
+.input-prefix::before {
+  content: "$";
+  position: absolute;
+  top: 50%;
+  left: 10px;
+  color: var(--slate-500);
+  transform: translateY(-50%);
+  font-size: 11px;
+}
+
+.form-actions {
+  margin-top: 18px;
+  padding-top: 16px;
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  gap: 8px;
+  border-top: 1px solid var(--slate-100);
+}
+
+.save-message {
+  margin-right: auto;
+  color: var(--green-700);
+  font-size: 10px;
+  font-weight: 650;
+}
+
+.danger-zone {
+  border-color: #efc8cd;
+}
+
+.danger-zone .settings-section-header h3 {
+  color: var(--red-700);
+}
+
+.empty-state {
+  min-height: 290px;
+  padding: 40px 20px;
+  display: grid;
+  place-items: center;
+  text-align: center;
+}
+
+.empty-state-icon {
+  width: 58px;
+  height: 58px;
+  margin: 0 auto 13px;
+  display: grid;
+  place-items: center;
+  color: var(--slate-500);
+  background: var(--slate-100);
+  border-radius: 16px;
+}
+
+.empty-state-icon .icon {
+  width: 25px;
+  height: 25px;
+}
+
+.empty-state h3 {
+  margin: 0;
+  font-size: 14px;
+}
+
+.empty-state p {
+  max-width: 390px;
+  margin: 6px auto 15px;
+  color: var(--slate-500);
+  font-size: 10px;
+}
+
+.loading-state {
+  min-height: 240px;
+  display: grid;
+  place-items: center;
+}
+
+.spinner {
+  width: 26px;
+  height: 26px;
+  border: 3px solid var(--slate-200);
+  border-top-color: var(--blue-600);
+  border-radius: 50%;
+  animation: spin .7s linear infinite;
+}
+
+@keyframes spin {
+  to { transform: rotate(360deg); }
+}
+
+.modal-backdrop {
+  position: fixed;
+  inset: 0;
+  z-index: 100;
+  padding: 20px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: rgba(13, 21, 38, .55);
+  backdrop-filter: blur(3px);
+  animation: fadeIn .15s ease;
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+.modal {
+  width: 100%;
+  max-width: 650px;
+  max-height: calc(100vh - 40px);
+  display: flex;
+  flex-direction: column;
+  background: white;
+  border-radius: var(--radius-lg);
+  box-shadow: var(--shadow-lg);
+  overflow: hidden;
+  animation: modalIn .2s ease;
+}
+
+.modal.small {
+  max-width: 430px;
+}
+
+.modal.large {
+  max-width: 850px;
+}
+
+@keyframes modalIn {
+  from {
+    opacity: 0;
+    transform: translateY(10px) scale(.985);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
+
+.modal-header {
+  min-height: 64px;
+  padding: 15px 20px;
+  display: flex;
+  align-items: flex-start;
+  gap: 12px;
+  border-bottom: 1px solid var(--slate-200);
+}
+
+.modal-header-copy {
+  min-width: 0;
+  flex: 1;
+}
+
+.modal-header h2 {
+  margin: 0;
+  font-size: 16px;
+}
+
+.modal-header p {
+  margin: 3px 0 0;
+  color: var(--slate-500);
+  font-size: 10px;
+}
+
+.modal-close {
+  width: 31px;
+  height: 31px;
+  display: grid;
+  place-items: center;
+  flex: 0 0 auto;
+  color: var(--slate-500);
+  background: transparent;
+  border: 0;
+  border-radius: 7px;
+}
+
+.modal-close:hover {
+  color: var(--navy-900);
+  background: var(--slate-100);
+}
+
+.modal-body {
+  padding: 20px;
+  overflow-y: auto;
+}
+
+.modal-body > .form-grid {
+  gap: 16px;
+}
+
+.modal-footer {
+  min-height: 67px;
+  padding: 13px 20px;
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  gap: 8px;
+  background: var(--slate-50);
+  border-top: 1px solid var(--slate-200);
+}
+
+.modal-footer-note {
+  margin-right: auto;
+  color: var(--slate-500);
+  font-size: 9px;
+}
+
+.form-section-title {
+  grid-column: 1 / -1;
+  margin: 3px 0 -2px;
+  padding-bottom: 7px;
+  color: var(--slate-500);
+  border-bottom: 1px solid var(--slate-200);
+  font-size: 9px;
+  font-weight: 750;
+  letter-spacing: .06em;
+  text-transform: uppercase;
+}
+
+.toast-region {
+  position: fixed;
+  right: 20px;
+  bottom: 20px;
+  z-index: 200;
+  width: min(350px, calc(100vw - 40px));
+  display: grid;
+  gap: 8px;
+  pointer-events: none;
+}
+
+.toast {
+  padding: 12px 14px;
+  display: flex;
+  align-items: flex-start;
+  gap: 10px;
+  color: var(--slate-700);
+  background: white;
+  border: 1px solid var(--slate-200);
+  border-left: 4px solid var(--blue-600);
+  border-radius: 9px;
+  box-shadow: var(--shadow-lg);
+  pointer-events: auto;
+  animation: toastIn .25s ease;
+}
+
+.toast.success {
+  border-left-color: var(--green-600);
+}
+
+.toast.error {
+  border-left-color: var(--red-600);
+}
+
+.toast.warning {
+  border-left-color: var(--amber-600);
+}
+
+.toast.removing {
+  animation: toastOut .2s ease forwards;
+}
+
+@keyframes toastIn {
+  from { opacity: 0; transform: translateX(15px); }
+  to { opacity: 1; transform: translateX(0); }
+}
+
+@keyframes toastOut {
+  to { opacity: 0; transform: translateX(15px); }
+}
+
+.toast-icon {
+  width: 23px;
+  height: 23px;
+  display: grid;
+  place-items: center;
+  flex: 0 0 auto;
+  color: var(--blue-700);
+  background: var(--blue-100);
+  border-radius: 50%;
+}
+
+.toast.success .toast-icon {
+  color: var(--green-700);
+  background: var(--green-100);
+}
+
+.toast.error .toast-icon {
+  color: var(--red-700);
+  background: var(--red-100);
+}
+
+.toast.warning .toast-icon {
+  color: var(--amber-700);
+  background: var(--amber-100);
+}
+
+.toast-icon .icon {
+  width: 13px;
+  height: 13px;
+}
+
+.toast-body {
+  min-width: 0;
+  flex: 1;
+}
+
+.toast-body strong,
+.toast-body span {
+  display: block;
+}
+
+.toast-body strong {
+  color: var(--navy-900);
+  font-size: 11px;
+}
+
+.toast-body span {
+  margin-top: 2px;
+  color: var(--slate-500);
+  font-size: 9px;
+}
+
+.toast-close {
+  width: 22px;
+  height: 22px;
+  padding: 0;
+  color: var(--slate-400);
+  background: transparent;
+  border: 0;
+}
+
+.popover {
+  position: fixed;
+  top: 61px;
+  right: 24px;
+  z-index: 45;
+  width: 320px;
+  max-height: 430px;
+  overflow-y: auto;
+  background: white;
+  border: 1px solid var(--slate-200);
+  border-radius: 11px;
+  box-shadow: var(--shadow-lg);
+}
+
+.popover-header {
+  padding: 14px;
+  display: flex;
+  align-items: center;
+  border-bottom: 1px solid var(--slate-200);
+}
+
+.popover-header h3 {
+  margin: 0;
+  font-size: 12px;
+}
+
+.popover-header button {
+  margin-left: auto;
+  color: var(--blue-700);
+  background: transparent;
+  border: 0;
+  font-size: 9px;
+  font-weight: 650;
+}
+
+.notification-item {
+  padding: 12px 14px;
+  display: flex;
+  gap: 9px;
+  border-bottom: 1px solid var(--slate-100);
+}
+
+.notification-item p {
+  margin: 0;
+  color: var(--slate-700);
+  font-size: 10px;
+}
+
+.notification-item span {
+  display: block;
+  margin-top: 3px;
+  color: var(--slate-400);
+  font-size: 8px;
+}
+
+.notification-item .status-dot {
+  margin-top: 5px;
+  flex: 0 0 auto;
+}
+
+.sidebar-overlay {
+  display: none;
+}
+
+@media (max-width: 1150px) {
+  .metric-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  .integration-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  .report-grid {
+    grid-template-columns: 1fr;
+  }
+}
+
+@media (max-width: 980px) {
+  .sidebar {
+    transform: translateX(-100%);
+  }
+
+  .sidebar.open {
+    transform: translateX(0);
+  }
+
+  .sidebar-overlay {
+    position: fixed;
+    inset: 0;
+    z-index: 45;
+    background: rgba(13, 21, 38, .45);
+  }
+
+  .sidebar-overlay.visible {
+    display: block;
+  }
+
+  .main {
+    margin-left: 0;
+  }
+
+  .mobile-menu {
+    width: 36px;
+    height: 36px;
+    display: grid;
+    place-items: center;
+    color: var(--slate-600);
+    background: white;
+    border: 1px solid var(--slate-200);
+    border-radius: 8px;
+  }
+
+  .dashboard-grid,
+  .exception-layout {
+    grid-template-columns: 1fr;
+  }
+
+  .inspector {
+    position: static;
+  }
+
+  .settings-layout {
+    grid-template-columns: 1fr;
+  }
+
+  .settings-nav {
+    position: static;
+    display: flex;
+    overflow-x: auto;
+  }
+
+  .settings-nav button {
+    width: auto;
+    white-space: nowrap;
+  }
+}
+
+@media (max-width: 700px) {
+  .topbar {
+    padding: 0 16px;
+  }
+
+  .page-heading p,
+  .sync-state,
+  .avatar-button .chevron,
+  .avatar-button .avatar-text {
+    display: none;
+  }
+
+  .content {
+    padding: 21px 16px 38px;
+  }
+
+  .view-header {
+    flex-direction: column;
+  }
+
+  .view-title h2 {
+    font-size: 22px;
+  }
+
+  .view-actions {
+    width: 100%;
+    margin-left: 0;
+    justify-content: flex-start;
+  }
+
+  .metric-grid,
+  .integration-grid,
+  .form-grid,
+  .form-grid.three,
+  .report-kpis {
+    grid-template-columns: 1fr;
+  }
+
+  .report-kpi {
+    padding: 0 0 10px;
+    border-right: 0;
+    border-bottom: 1px solid var(--slate-200);
+  }
+
+  .report-kpi:last-child {
+    padding-bottom: 0;
+    border-bottom: 0;
+  }
+
+  .filterbar > .search-wrap {
+    width: 100%;
+    flex-basis: 100%;
+  }
+
+  .filter-select {
+    flex: 1;
+  }
+
+  .filter-count {
+    width: 100%;
+    margin-left: 0;
+  }
+
+  .queue-toolbar {
+    flex-wrap: wrap;
+  }
+
+  .comparison-row {
+    grid-template-columns: 60px 1fr 12px 1fr;
+  }
+
+  .modal-backdrop {
+    padding: 10px;
+    align-items: flex-end;
+  }
+
+  .modal {
+    max-height: calc(100vh - 20px);
+    border-radius: 16px 16px 10px 10px;
+  }
+
+  .modal-footer-note {
+    display: none;
+  }
+
+  .modal-footer {
+    justify-content: stretch;
+  }
+
+  .modal-footer .btn {
+    flex: 1;
+  }
+
+  .popover {
+    top: 61px;
+    right: 10px;
+    width: calc(100vw - 20px);
+  }
+}
+
+@media (max-width: 430px) {
+  .metric-grid {
+    gap: 10px;
+  }
+
+  .metric-card {
+    min-height: 120px;
+  }
+
+  .view-actions .btn {
+    flex: 1;
+  }
+
+  .chart-area {
+    gap: 5px;
+  }
+
+  .chart-bars {
+    gap: 4px;
+  }
+
+  .bar-stack {
+    width: 60%;
+  }
+}
+
+@media print {
+  .sidebar,
+  .topbar,
+  .view-actions,
+  .filterbar,
+  .table-footer {
+    display: none !important;
+  }
+
+  .main {
+    margin: 0;
+  }
+
+  .content {
+    max-width: none;
+    padding: 0;
+  }
+
+  .panel,
+  .metric-card {
+    box-shadow: none;
+  }
+}
+</style>
+</head>
+<body>
+<div class="app-shell">
+  <aside class="sidebar" id="sidebar" aria-label="Primary navigation">
+    <div class="brand">
+      <div class="brand-mark" aria-hidden="true"></div>
+      <span class="brand-name">Postback</span>
+      <span class="badge-beta">Beta</span>
+    </div>
+    <nav class="sidebar-nav">
+      <div class="nav-label">Workspace</div>
+      <button class="nav-item active" data-view="dashboard">
+        <svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><rect x="3" y="3" width="7" height="7" rx="1"></rect><rect x="14" y="3" width="7" height="7" rx="1"></rect><rect x="3" y="14" width="7" height="7" rx="1"></rect><rect x="14" y="14" width="7" height="7" rx="1"></rect></svg>
+        Dashboard
+      </button>
+      <button class="nav-item" data-view="jobs">
+        <svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M9 6V4h6v2"></path><path d="M9 3h6"></path><rect x="4" y="6" width="16" height="15" rx="2"></rect><path d="m8 13 2 2 5-5"></path></svg>
+        Unified jobs
+        <span class="nav-count" id="jobsNavCount">0</span>
+      </button>
+      <button class="nav-item" data-view="exceptions">
+        <svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M10.3 3.6 2.4 17.1A2 2 0 0 0 4.1 20h15.8a2 2 0 0 0 1.7-2.9L13.7 3.6a2 2 0 0 0-3.4 0Z"></path><path d="M12 9v4"></path><path d="M12 17h.01"></path></svg>
+        Exceptions
+        <span class="nav-count" id="exceptionsNavCount">0</span>
+      </button>
+      <button class="nav-item" data-view="reports">
+        <svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M4 20V10"></path><path d="M10 20V4"></path><path d="M16 20v-7"></path><path d="M22 20H2"></path></svg>
+        Reports
+      </button>
+      <div class="nav-label">Manage</div>
+      <button class="nav-item" data-view="integrations">
+        <svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M8 12h8"></path><path d="M5 8H4a2 2 0 0 0-2 2v8h6v-3"></path><path d="M19 16h1a2 2 0 0 0 2-2V6h-6v3"></path><rect x="8" y="8" width="8" height="8" rx="2"></rect></svg>
+        Integrations
+        <span class="nav-count" id="connectionsNavCount">0/4</span>
+      </button>
+      <button class="nav-item" data-view="settings">
+        <svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="3"></circle><path d="M19.4 15a1.7 1.7 0 0 0 .3 1.9l.1.1-2.8 2.8-.1-.1a1.7 1.7 0 0 0-1.9-.3 1.7 1.7 0 0 0-1 1.6v.2h-4V21a1.7 1.7 0 0 0-1-1.6 1.7 1.7 0 0 0-1.9.3l-.1.1L4.2 17l.1-.1a1.7 1.7 0 0 0 .3-1.9A1.7 1.7 0 0 0 3 14H2.8v-4H3a1.7 1.7 0 0 0 1.6-1 1.7 1.7 0 0 0-.3-1.9L4.2 7 7 4.2l.1.1a1.7 1.7 0 0 0 1.9.3 1.7 1.7 0 0 0 1-1.6v-.2h4V3a1.7 1.7 0 0 0 1 1.6 1.7 1.7 0 0 0 1.9-.3l.1-.1L19.8 7l-.1.1a1.7 1.7 0 0 0-.3 1.9 1.7 1.7 0 0 0 1.6 1h.2v4H21a1.7 1.7 0 0 0-1.6 1Z"></path></svg>
+        Settings
+      </button>
+    </nav>
+    <div class="sidebar-footer">
+      <button class="company-switcher" id="companySwitcher" title="Switch company">
+        <span class="company-avatar">NS</span>
+        <span class="company-meta">
+          <strong>Northstar Services</strong>
+          <span>St. Louis, MO · Pro plan</span>
+        </span>
+        <svg class="icon" style="width:14px;height:14px;color:#718098" viewBox="0 0 24 24" aria-hidden="true"><path d="m9 18 6-6-6-6"></path></svg>
+      </button>
+    </div>
+  </aside>
+  <div class="sidebar-overlay" id="sidebarOverlay"></div>
+
+  <main class="main">
+    <header class="topbar">
+      <button class="mobile-menu" id="mobileMenu" aria-label="Open navigation">
+        <svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M4 6h16"></path><path d="M4 12h16"></path><path d="M4 18h16"></path></svg>
+      </button>
+      <div class="page-heading">
+        <h1 id="topbarTitle">Dashboard</h1>
+        <p id="topbarSubtitle">Reconciliation overview</p>
+      </div>
+      <div class="topbar-actions">
+        <div class="sync-state" id="syncState">
+          <span class="sync-dot"></span>
+          <span id="syncText">All systems synced</span>
+        </div>
+        <button class="notification-button" id="notificationButton" aria-label="View notifications" aria-expanded="false">
+          <svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M18 8a6 6 0 0 0-12 0c0 7-3 7-3 9h18c0-2-3-2-3-9"></path><path d="M10 21h4"></path></svg>
+          <span class="notification-dot"></span>
+        </button>
+        <button class="avatar-button" id="profileButton" aria-label="Open user menu">
+          <span class="avatar">JM</span>
+          <span class="avatar-text">Jordan</span>
+          <svg class="icon chevron" style="width:13px;height:13px" viewBox="0 0 24 24" aria-hidden="true"><path d="m6 9 6 6 6-6"></path></svg>
+        </button>
+      </div>
+    </header>
+
+    <div class="content">
+      <section class="view" id="dashboardView" data-view-panel="dashboard">
+        <div class="view-header">
+          <div class="view-title">
+            <h2>Good morning, Jordan</h2>
+            <p>Here’s how Northstar’s job records are reconciling today.</p>
+          </div>
+          <div class="view-actions">
+            <button class="btn btn-secondary" id="dashboardDateButton">
+              <svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><rect x="3" y="5" width="18" height="16" rx="2"></rect><path d="M16 3v4"></path><path d="M8 3v4"></path><path d="M3 10h18"></path></svg>
+              This month
+            </button>
+            <button class="btn btn-primary" data-open-job-modal>
+              <svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 5v14"></path><path d="M5 12h14"></path></svg>
+              Add job
+            </button>
+          </div>
+        </div>
+        <div class="metric-grid" id="dashboardMetrics"></div>
+        <div class="dashboard-grid">
+          <section class="panel">
+            <div class="panel-header">
+              <div>
+                <h3>Revenue reconciliation</h3>
+                <p>Matched revenue by completion week</p>
+              </div>
+              <div class="panel-header-action">
+                <select class="filter-select" id="chartRange" aria-label="Chart date range">
+                  <option value="30">Last 30 days</option>
+                  <option value="90">Last 90 days</option>
+                  <option value="180">Last 6 months</option>
+                </select>
+              </div>
+            </div>
+            <div class="reconciliation-chart" id="reconciliationChart"></div>
+          </section>
+          <section class="panel">
+            <div class="panel-header">
+              <div>
+                <h3>Priority exceptions</h3>
+                <p>Items needing your attention</p>
+              </div>
+              <button class="link-button" data-go="exceptions">View queue</button>
+            </div>
+            <div class="exception-list" id="priorityExceptions"></div>
+          </section>
+        </div>
+        <div class="dashboard-grid">
+          <section class="panel">
+            <div class="panel-header">
+              <div>
+                <h3>System health</h3>
+                <p>Live integration status and sync activity</p>
+              </div>
+              <button class="link-button" data-go="integrations">Manage</button>
+            </div>
+            <div class="health-list" id="systemHealth"></div>
+          </section>
+          <section class="panel activity-panel">
+            <div class="panel-header">
+              <div>
+                <h3>Recent activity</h3>
+                <p>Latest automation and team actions</p>
+              </div>
+            </div>
+            <div class="activity-list" id="recentActivity"></div>
+          </section>
+        </div>
+      </section>
+
+      <section class="view hidden" id="jobsView" data-view-panel="jobs">
+        <div class="view-header">
+          <div class="view-title">
+            <h2>Unified jobs</h2>
+            <p>One trusted record for every completed service job.</p>
+          </div>
+          <div class="view-actions">
+            <button class="btn btn-secondary" id="exportJobsButton">
+              <svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 3v12"></path><path d="m7 10 5 5 5-5"></path><path d="M5 21h14"></path></svg>
+              Export CSV
+            </button>
+            <button class="btn btn-primary" data-open-job-modal>
+              <svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 5v14"></path><path d="M5 12h14"></path></svg>
+              Add job
+            </button>
+          </div>
+        </div>
+        <div class="filterbar">
+          <div class="search-wrap">
+            <svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><circle cx="11" cy="11" r="7"></circle><path d="m20 20-4-4"></path></svg>
+            <label class="sr-only" for="jobSearch">Search jobs</label>
+            <input class="search-input" id="jobSearch" type="search" placeholder="Search customer, job, address, technician…">
+          </div>
+          <label class="sr-only" for="jobStatusFilter">Filter by status</label>
+          <select class="filter-select" id="jobStatusFilter">
+            <option value="all">All statuses</option>
+            <option value="matched">Matched</option>
+            <option value="needs-review">Needs review</option>
+            <option value="unmatched">Unmatched</option>
+            <option value="incomplete">Incomplete</option>
+          </select>
+          <label class="sr-only" for="jobPaymentFilter">Filter by payment</label>
+          <select class="filter-select" id="jobPaymentFilter">
+            <option value="all">All payments</option>
+            <option value="paid">Paid</option>
+            <option value="outstanding">Outstanding</option>
+            <option value="overdue">Overdue</option>
+          </select>
+          <label class="sr-only" for="jobMatchFilter">Filter by match quality</label>
+          <select class="filter-select" id="jobMatchFilter">
+            <option value="all">All match types</option>
+            <option value="exact">Exact match</option>
+            <option value="fuzzy">Likely match</option>
+            <option value="manual">Manual match</option>
+          </select>
+          <span class="filter-count" id="jobFilterCount"></span>
+        </div>
+        <section class="panel table-panel">
+          <div class="data-table-wrap">
+            <table class="data-table">
+              <thead>
+                <tr>
+                  <th>Job</th>
+                  <th>Customer</th>
+                  <th>Completed</th>
+                  <th>Technician</th>
+                  <th>Amount</th>
+                  <th>Payment</th>
+                  <th>Match</th>
+                  <th>Status</th>
+                  <th><span class="sr-only">Actions</span></th>
+                </tr>
+              </thead>
+              <tbody id="jobsTableBody"></tbody>
+            </table>
+          </div>
+          <div id="jobsTableEmpty"></div>
+          <div class="table-footer" id="jobsTableFooter"></div>
+        </section>
+      </section>
+
+      <section class="view hidden" id="exceptionsView" data-view-panel="exceptions">
+        <div class="view-header">
+          <div class="view-title">
+            <h2>Exceptions queue</h2>
+            <p>Resolve conflicts and incomplete matches before they affect reporting.</p>
+          </div>
+          <div class="view-actions">
+            <select class="filter-select" id="exceptionPriorityFilter" aria-label="Filter exception priority">
+              <option value="all">All priorities</option>
+              <option value="high">High priority</option>
+              <option value="medium">Medium priority</option>
+              <option value="low">Low priority</option>
+            </select>
+            <button class="btn btn-secondary" id="resolveVisibleButton">
+              <svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><path d="m20 6-11 11-5-5"></path></svg>
+              Resolve visible
+            </button>
+          </div>
+        </div>
+        <div class="exception-layout">
+          <section class="panel queue-list">
+            <div class="queue-toolbar">
+              <div class="segmented" aria-label="Exception status filter">
+                <button class="segment active" data-exception-status="open">Open</button>
+                <button class="segment" data-exception-status="resolved">Resolved</button>
+                <button class="segment" data-exception-status="ignored">Ignored</button>
+              </div>
+              <span class="filter-count" id="exceptionCount"></span>
+            </div>
+            <div id="exceptionQueue"></div>
+          </section>
+          <aside class="panel inspector" id="exceptionInspector"></aside>
+        </div>
+      </section>
+
+      <section class="view hidden" id="integrationsView" data-view-panel="integrations">
+        <div class="view-header">
+          <div class="view-title">
+            <h2>Integrations</h2>
+            <p>Connect your field-service, CRM, payment, and accounting systems.</p>
+          </div>
+          <div class="view-actions">
+            <button class="btn btn-primary" id="addIntegrationButton">
+              <svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 5v14"></path><path d="M5 12h14"></path></svg>
+              Connect system
+            </button>
+          </div>
+        </div>
+        <div class="integration-section-title">
+          <h3>Connected systems</h3>
+          <span id="connectedSummary"></span>
+        </div>
+        <div class="integration-grid" id="integrationGrid"></div>
+        <div class="integration-section-title">
+          <h3>Alert delivery</h3>
+          <span>Choose where your team receives urgent updates</span>
+        </div>
+        <div class="alert-card">
+          <div class="alert-card-icon">
+            <svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M18 8a6 6 0 0 0-12 0c0 7-3 7-3 9h18c0-2-3-2-3-9"></path><path d="M10 21h4"></path></svg>
+          </div>
+          <div class="alert-card-body">
+            <h3>High-priority mismatch alerts</h3>
+            <p>Send immediate notifications for revenue conflicts and duplicate records.</p>
+            <div class="toggle-list">
+              <div class="toggle-row">
+                <label for="emailAlertsToggle">Email alerts to operations@northstar.example</label>
+                <span class="switch">
+                  <input type="checkbox" id="emailAlertsToggle">
+                  <span class="switch-track" aria-hidden="true"></span>
+                </span>
+              </div>
+              <div class="toggle-row">
+                <label for="slackAlertsToggle">Slack alerts to #job-reconciliation</label>
+                <span class="switch">
+                  <input type="checkbox" id="slackAlertsToggle">
+                  <span class="switch-track" aria-hidden="true"></span>
+                </span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <section class="view hidden" id="reportsView" data-view-panel="reports">
+        <div class="view-header">
+          <div class="view-title">
+            <h2>Reconciliation reports</h2>
+            <p>Understand matched revenue, outstanding balances, and missing records.</p>
+          </div>
+          <div class="view-actions">
+            <select class="filter-select" id="reportRange" aria-label="Report date range">
+              <option value="30">Last 30 days</option>
+              <option value="90">Last 90 days</option>
+              <option value="180">Last 6 months</option>
+              <option value="365">Last 12 months</option>
+            </select>
+            <button class="btn btn-secondary" id="printReportButton">
+              <svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M6 9V3h12v6"></path><rect x="6" y="14" width="12" height="7"></rect><path d="M6 18H4a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-2"></path></svg>
+              Print
+            </button>
+            <button class="btn btn-primary" id="downloadReportButton">
+              <svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 3v12"></path><path d="m7 10 5 5 5-5"></path><path d="M5 21h14"></path></svg>
+              Download CSV
+            </button>
+          </div>
+        </div>
+        <div class="report-grid">
+          <section class="panel">
+            <div class="panel-header">
+              <div>
+                <h3>Financial summary</h3>
+                <p id="reportPeriodLabel">Selected reporting period</p>
+              </div>
+            </div>
+            <div class="report-kpis" id="reportKpis"></div>
+          </section>
+          <section class="panel">
+            <div class="panel-header">
+              <div>
+                <h3>Record readiness</h3>
+                <p>Share of complete reconciled records</p>
+              </div>
+            </div>
+            <div class="report-breakdown" id="recordReadiness"></div>
+          </section>
+        </div>
+        <section class="panel">
+          <div class="panel-header">
+            <div>
+              <h3>Reconciliation detail</h3>
+              <p>Current status by source system</p>
+            </div>
+          </div>
+          <div class="data-table-wrap">
+            <table class="data-table">
+              <thead>
+                <tr>
+                  <th>Category</th>
+                  <th>Records</th>
+                  <th>Value</th>
+                  <th>Avg. resolution time</th>
+                  <th>Rate</th>
+                  <th>Status</th>
+                </tr>
+              </thead>
+              <tbody id="reportTableBody"></tbody>
+            </table>
+          </div>
+        </section>
+      </section>
+
+      <section class="view hidden" id="settingsView" data-view-panel="settings">
+        <div class="view-header">
+          <div class="view-title">
+            <h2>Workspace settings</h2>
+            <p>Configure reconciliation rules, company details, and notifications.</p>
+          </div>
+        </div>
+        <div class="settings-layout">
+          <nav class="panel settings-nav" aria-label="Settings sections">
+            <button class="active" data-settings-target="companySettings">
+              <svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M3 21h18"></path><path d="M6 21V5l6-3 6 3v16"></path><path d="M9 9h1"></path><path d="M14 9h1"></path><path d="M9 13h1"></path><path d="M14 13h1"></path><path d="M10 21v-4h4v4"></path></svg>
+              Company
+            </button>
+            <button data-settings-target="matchingSettings">
+              <svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M8 3H5a2 2 0 0 0-2 2v3"></path><path d="M16 3h3a2 2 0 0 1 2 2v3"></path><path d="M8 21H5a2 2 0 0 1-2-2v-3"></path><path d="M16 21h3a2 2 0 0 0 2-2v-3"></path><circle cx="12" cy="12" r="3"></circle></svg>
+              Matching
+            </button>
+            <button data-settings-target="alertSettings">
+              <svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M18 8a6 6 0 0 0-12 0c0 7-3 7-3 9h18c0-2-3-2-3-9"></path><path d="M10 21h4"></path></svg>
+              Alerts
+            </button>
+            <button data-settings-target="dataSettings">
+              <svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><ellipse cx="12" cy="5" rx="9" ry="3"></ellipse><path d="M3 5v14c0 1.7 4 3 9 3s9-1.3 9-3V5"></path><path d="M3 12c0 1.7 4 3 9 3s9-1.3 9-3"></path></svg>
+              Data
+            </button>
+          </nav>
+          <div>
+            <section class="panel settings-section" id="companySettings">
+              <div class="settings-section-header">
+                <h3>Company profile</h3>
+                <p>Used on reports, exports, and alert summaries.</p>
+              </div>
+              <form class="settings-form" id="companySettingsForm" novalidate>
+                <div class="form-grid">
+                  <div class="field">
+                    <label for="companyName">Company name <span class="required">*</span></label>
+                    <input class="input" id="companyName" name="companyName" required autocomplete="organization">
+                    <div class="error-text" data-error-for="companyName"></div>
+                  </div>
+                  <div class="field">
+                    <label for="timezone">Timezone <span class="required">*</span></label>
+                    <select class="select" id="timezone" name="timezone" required>
+                      <option value="America/Chicago">Central Time</option>
+                      <option value="America/New_York">Eastern Time</option>
+                      <option value="America/Denver">Mountain Time</option>
+                      <option value="America/Los_Angeles">Pacific Time</option>
+                    </select>
+                    <div class="error-text" data-error-for="timezone"></div>
+                  </div>
+                  <div class="field full">
+                    <label for="operationsEmail">Operations email <span class="required">*</span></label>
+                    <input class="input" id="operationsEmail" name="operationsEmail" type="email" required autocomplete="email">
+                    <div class="error-text" data-error-for="operationsEmail"></div>
+                  </div>
+                </div>
+                <div class="form-actions">
+                  <span class="save-message hidden" data-save-message>Changes saved</span>
+                  <button class="btn btn-primary" type="submit">Save company profile</button>
+                </div>
+              </form>
+            </section>
+
+            <section class="panel settings-section hidden" id="matchingSettings">
+              <div class="settings-section-header">
+                <h3>Matching rules</h3>
+                <p>Set the confidence required for automatic record linking.</p>
+              </div>
+              <form class="settings-form" id="matchingSettingsForm" novalidate>
+                <div class="form-grid">
+                  <div class="field full">
+                    <label for="autoMatchThreshold">Automatic match threshold</label>
+                    <select class="select" id="autoMatchThreshold" name="autoMatchThreshold">
+                      <option value="75">75% — Conservative</option>
+                      <option value="85">85% — Recommended</option>
+                      <option value="90">90% — Strict</option>
+                      <option value="95">95% — Very strict</option>
+                    </select>
+                    <div class="field-hint">Matches below this score are sent to the exceptions queue.</div>
+                  </div>
+                  <div class="field full">
+                    <label for="matchFields">Fields used for matching</label>
+                    <textarea class="textarea" id="matchFields" name="matchFields"></textarea>
+                  </div>
+                  <div class="field full">
+                    <label for="dateTolerance">Completion date tolerance</label>
+                    <select class="select" id="dateTolerance" name="dateTolerance">
+                      <option value="0">Same day only</option>
+                      <option value="1">Within 1 day</option>
+                      <option value="3">Within 3 days</option>
+                      <option value="7">Within 7 days</option>
+                    </select>
+                  </div>
+                  <div class="field full">
+                    <div class="toggle-row">
+                      <label for="addressMatchingToggle">Use normalized customer names and addresses</label>
+                      <span class="switch">
+                        <input type="checkbox" id="addressMatchingToggle" name="addressMatching">
+                        <span class="switch-track" aria-hidden="true"></span>
+                      </span>
+                    </div>
+                  </div>
+                </div>
+                <div class="form-actions">
+                  <span class="save-message hidden" data-save-message>Changes saved</span>
+                  <button class="btn btn-primary" type="submit">Save matching rules</button>
+                </div>
+              </form>
+            </section>
+
+            <section class="panel settings-section hidden" id="alertSettings">
+              <div class="settings-section-header">
+                <h3>Notification rules</h3>
+                <p>Decide which reconciliation events need your team’s attention.</p>
+              </div>
+              <form class="settings-form" id="alertSettingsForm">
+                <div class="toggle-list">
+                  <div class="toggle-row">
+                    <label for="notifyHigh">High-priority conflicts</label>
+                    <span class="switch"><input type="checkbox" id="notifyHigh" name="notifyHigh"><span class="switch-track"></span></span>
+                  </div>
+                  <div class="toggle-row">
+                    <label for="notifyMissingInvoices">Missing invoices over $500</label>
+                    <span class="switch"><input type="checkbox" id="notifyMissingInvoices" name="notifyMissingInvoices"><span class="switch-track"></span></span>
+                  </div>
+                  <div class="toggle-row">
+                    <label for="notifyDuplicates">Possible duplicate jobs</label>
+                    <span class="switch"><input type="checkbox" id="notifyDuplicates" name="notifyDuplicates"><span class="switch-track"></span></span>
+                  </div>
+                  <div class="toggle-row">
+                    <label for="notifyWeekly">Weekly reconciliation summary</label>
+                    <span class="switch"><input type="checkbox" id="notifyWeekly" name="notifyWeekly"><span class="switch-track"></span></span>
+                  </div>
+                </div>
+                <div class="form-grid" style="margin-top:18px">
+                  <div class="field">
+                    <label for="alertDigestTime">Daily digest time</label>
+                    <input class="input" id="alertDigestTime" name="alertDigestTime" type="time">
+                  </div>
+                  <div class="field">
+                    <label for="weeklyDay">Weekly summary day</label>
+                    <select class="select" id="weeklyDay" name="weeklyDay">
+                      <option value="monday">Monday</option>
+                      <option value="tuesday">Tuesday</option>
+                      <option value="friday">Friday</option>
+                    </select>
+                  </div>
+                </div>
+                <div class="form-actions">
+                  <span class="save-message hidden" data-save-message>Changes saved</span>
+                  <button class="btn btn-primary" type="submit">Save notification rules</button>
+                </div>
+              </form>
+            </section>
+
+            <section class="panel settings-section hidden" id="dataSettings">
+              <div class="settings-section-header">
+                <h3>Workspace data</h3>
+                <p>Download a local backup or reset this demo workspace.</p>
+              </div>
+              <form class="settings-form" id="dataSettingsForm">
+                <div class="form-grid">
+                  <div class="field full">
+                    <label for="retentionMonths">Record retention</label>
+                    <select class="select" id="retentionMonths" name="retentionMonths">
+                      <option value="12">12 months</option>
+                      <option value="24">24 months</option>
+                      <option value="36">36 months</option>
+                      <option value="60">60 months</option>
+                    </select>
+                  </div>
+                </div>
+                <div class="form-actions">
+                  <button class="btn btn-secondary" type="button" id="backupDataButton">Download backup</button>
+                  <button class="btn btn-primary" type="submit">Save data settings</button>
+                </div>
+              </form>
+              <div class="settings-form" style="border-top:1px solid var(--slate-200)">
+                <div class="form-grid">
+                  <div class="field full">
+                    <label>Danger zone</label>
+                    <p class="field-hint" style="margin-bottom:10px">Reset all jobs, exceptions, integrations, and settings to the original demo data. This cannot be undone.</p>
+                    <button class="btn btn-danger" type="button" id="resetDataButton">Reset demo workspace</button>
+                  </div>
+                </div>
+              </div>
+            </section>
+          </div>
+        </div>
+      </section>
+    </div>
+  </main>
+</div>
+
+<div class="modal-backdrop hidden" id="jobModal" role="dialog" aria-modal="true" aria-labelledby="jobModalTitle">
+  <div class="modal large">
+    <div class="modal-header">
+      <div class="modal-header-copy">
+        <h2 id="jobModalTitle">Add completed job</h2>
+        <p>Create a unified record. Connected-system links can be added as they become available.</p>
+      </div>
+      <button class="modal-close" data-close-modal="jobModal" aria-label="Close job form">
+        <svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><path d="m6 6 12 12"></path><path d="M18 6 6 18"></path></svg>
+      </button>
+    </div>
+    <form id="jobForm" novalidate>
+      <div class="modal-body">
+        <input type="hidden" id="editingJobId" name="editingJobId">
+        <div class="form-grid">
+          <div class="form-section-title">Job details</div>
+          <div class="field">
+            <label for="jobTitle">Job title <span class="required">*</span></label>
+            <input class="input" id="jobTitle" name="jobTitle" placeholder="e.g. Water heater replacement" required>
+            <div class="error-text" data-error-for="jobTitle"></div>
+          </div>
+          <div class="field">
+            <label for="customerName">Customer name <span class="required">*</span></label>
+            <input class="input" id="customerName" name="customerName" placeholder="Customer or business name" required>
+            <div class="error-text" data-error-for="customerName"></div>
+          </div>
+          <div class="field full">
+            <label for="serviceAddress">Service address <span class="required">*</span></label>
+            <input class="input" id="serviceAddress" name="serviceAddress" placeholder="Street, city, state, ZIP" required autocomplete="street-address">
+            <div class="error-text" data-error-for="serviceAddress"></div>
+          </div>
+          <div class="field">
+            <label for="completionDate">Completion date <span class="required">*</span></label>
+            <input class="input" id="completionDate" name="completionDate" type="date" required>
+            <div class="error-text" data-error-for="completionDate"></div>
+          </div>
+          <div class="field">
+            <label for="technician">Technician <span class="required">*</span></label>
+            <select class="select" id="technician" name="technician" required>
+              <option value="">Select technician</option>
+              <option>Marcus Reed</option>
+              <option>Elena Torres</option>
+              <option>Jake Miller</option>
+              <option>Sam Brooks</option>
+              <option>Unassigned</option>
+            </select>
+            <div class="error-text" data-error-for="technician"></div>
+          </div>
+          <div class="field">
+            <label for="amount">Invoice amount <span class="required">*</span></label>
+            <div class="input-prefix">
+              <input class="input" id="amount" name="amount" type="number" min="0" step="0.01" placeholder="0.00" required>
+            </div>
+            <div class="error-text" data-error-for="amount"></div>
+          </div>
+          <div class="field">
+            <label for="paymentStatus">Payment status <span class="required">*</span></label>
+            <select class="select" id="paymentStatus" name="paymentStatus" required>
+              <option value="">Select status</option>
+              <option value="paid">Paid</option>
+              <option value="outstanding">Outstanding</option>
+              <option value="overdue">Overdue</option>
+            </select>
+            <div class="error-text" data-error-for="paymentStatus"></div>
+          </div>
+          <div class="form-section-title">Source links</div>
+          <div class="field">
+            <label for="fieldServiceId">Field-service job ID</label>
+            <input class="input" id="fieldServiceId" name="fieldServiceId" placeholder="e.g. FS-10482">
+          </div>
+          <div class="field">
+            <label for="invoiceNumber">Invoice number</label>
+            <input class="input" id="invoiceNumber" name="invoiceNumber" placeholder="e.g. INV-2091">
+          </div>
+          <div class="field">
+            <label for="crmId">CRM opportunity ID</label>
+            <input class="input" id="crmId" name="crmId" placeholder="e.g. OPP-7812">
+          </div>
+          <div class="field">
+            <label for="accountingId">Accounting transaction ID</label>
+            <input class="input" id="accountingId" name="accountingId" placeholder="e.g. TXN-55091">
+          </div>
+          <div class="field full">
+            <label for="completionNotes">Completion notes <span class="required">*</span></label>
+            <textarea class="textarea" id="completionNotes" name="completionNotes" placeholder="Work performed, equipment used, and customer-facing completion notes…" required></textarea>
+            <div class="error-text" data-error-for="completionNotes"></div>
+          </div>
+          <div class="field">
+            <label for="reconciliationStatus">Record status</label>
+            <select class="select" id="reconciliationStatus" name="reconciliationStatus">
+              <option value="matched">Matched</option>
+              <option value="needs-review">Needs review</option>
+              <option value="unmatched">Unmatched</option>
+              <option value="incomplete">Incomplete</option>
+            </select>
+          </div>
+          <div class="field">
+            <label for="matchQuality">Match type</label>
+            <select class="select" id="matchQuality" name="matchQuality">
+              <option value="exact">Exact match</option>
+              <option value="fuzzy">Likely match</option>
+              <option value="manual">Manual match</option>
+            </select>
+          </div>
+        </div>
+      </div>
+      <div class="modal-footer">
+        <span class="modal-footer-note">Data is stored locally in your browser.</span>
+        <button class="btn btn-secondary" type="button" data-close-modal="jobModal">Cancel</button>
+        <button class="btn btn-primary" type="submit" id="jobSubmitButton">Save job</button>
+      </div>
+    </form>
+  </div>
+</div>
+
+<div class="modal-backdrop hidden" id="resolveModal" role="dialog" aria-modal="true" aria-labelledby="resolveModalTitle">
+  <div class="modal small">
+    <div class="modal-header">
+      <div class="modal-header-copy">
+        <h2 id="resolveModalTitle">Resolve exception</h2>
+        <p id="resolveModalDescription">Choose how this record should be reconciled.</p>
+      </div>
+      <button class="modal-close" data-close-modal="resolveModal" aria-label="Close resolution form">
+        <svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><path d="m6 6 12 12"></path><path d="M18 6 6 18"></path></svg>
+      </button>
+    </div>
+    <form id="resolveForm" novalidate>
+      <div class="modal-body">
+        <input type="hidden" id="resolvingExceptionId" name="resolvingExceptionId">
+        <div class="form-grid">
+          <div class="field full">
+            <label for="resolutionAction">Recommended resolution <span class="required">*</span></label>
+            <select class="select" id="resolutionAction" name="resolutionAction" required>
+              <option value="">Choose an action</option>
+              <option value="accept-left">Accept field-service record as source of truth</option>
+              <option value="accept-right">Accept invoice/payment record as source of truth</option>
+              <option value="use-crm">Link to matching CRM opportunity</option>
+              <option value="remove-duplicate">Remove duplicate and keep linked record</option>
+              <option value="create-invoice">Mark invoice missing and create follow-up</option>
+              <option value="ignore">Ignore for now</option>
+            </select>
+            <div class="error-text" data-error-for="resolutionAction"></div>
+          </div>
+          <div class="field full">
+            <label for="resolutionNote">Resolution note</label>
+            <textarea class="textarea" id="resolutionNote" name="resolutionNote" placeholder="Explain what changed or why this is safe to resolve."></textarea>
+          </div>
+          <div class="field full">
+            <label for="resolutionStatus">Job status after resolution</label>
+            <select class="select" id="resolutionStatus" name="resolutionStatus">
+              <option value="matched">Matched</option>
+              <option value="needs-review">Needs review</option>
+              <option value="incomplete">Incomplete</option>
+              <option value="unmatched">Unmatched</option>
+            </select>
+          </div>
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button class="btn btn-secondary" type="button" data-close-modal="resolveModal">Cancel</button>
+        <button class="btn btn-primary" type="submit">Apply resolution</button>
+      </div>
+    </form>
+  </div>
+</div>
+
+<div class="modal-backdrop hidden" id="connectModal" role="dialog" aria-modal="true" aria-labelledby="connectModalTitle">
+  <div class="modal">
+    <div class="modal-header">
+      <div class="modal-header-copy">
+        <h2 id="connectModalTitle">Connect a system</h2>
+        <p>Authorize a supported provider using its secure OAuth flow.</p>
+      </div>
+      <button class="modal-close" data-close-modal="connectModal" aria-label="Close integration form">
+        <svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><path d="m6 6 12 12"></path><path d="M18 6 6 18"></path></svg>
+      </button>
+    </div>
+    <form id="connectForm" novalidate>
+      <div class="modal-body">
+        <div class="form-grid">
+          <div class="field full">
+            <label for="providerSelect">System provider <span class="required">*</span></label>
+            <select class="select" id="providerSelect" name="providerSelect" required>
+              <option value="">Select a provider</option>
+              <option value="ServiceTitan">ServiceTitan</option>
+              <option value="Housecall Pro">Housecall Pro</option>
+              <option value="Jobber">Jobber</option>
+              <option value="QuickBooks">QuickBooks Online</option>
+              <option value="Xero">Xero</option>
+              <option value="HubSpot">HubSpot</option>
+              <option value="Salesforce">Salesforce</option>
+              <option value="Stripe">Stripe</option>
+              <option value="Square">Square</option>
+              <option value="Slack">Slack</option>
+            </select>
+            <div class="error-text" data-error-for="providerSelect"></div>
+          </div>
+          <div class="field full">
+            <label for="accountName">Company account name <span class="required">*</span></label>
+            <input class="input" id="accountName" name="accountName" placeholder="Account or workspace name" required>
+            <div class="error-text" data-error-for="accountName"></div>
+          </div>
+          <div class="field full">
+            <div class="alert-card" style="box-shadow:none">
+              <div class="alert-card-icon">
+                <svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><rect x="4" y="10" width="16" height="11" rx="2"></rect><path d="M8 10V7a4 4 0 0 1 8 0v3"></path></svg>
+              </div>
+              <div class="alert-card-body">
+                <h3>Secure, read-only demo authorization</h3>
+                <p>This local prototype simulates OAuth. Credentials are never requested or stored.</p>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="modal-footer">
+        <span class="modal-footer-note">Demo authorization completes instantly.</span>
+        <button class="btn btn-secondary" type="button" data-close-modal="connectModal">Cancel</button>
+        <button class="btn btn-primary" type="submit">Authorize connection</button>
+      </div>
+    </form>
+  </div>
+</div>
+
+<div class="modal-backdrop hidden" id="notificationModal" role="dialog" aria-modal="true" aria-labelledby="notificationModalTitle">
+  <div class="modal small">
+    <div class="modal-header">
+      <div class="modal-header-copy">
+        <h2 id="notificationModalTitle">Sync a connected system</h2>
+        <p id="notificationDescription">Postback will pull new jobs, invoices, and payment updates.</p>
+      </div>
+      <button class="modal-close" data-close-modal="notificationModal" aria-label="Close sync form">
+        <svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><path d="m6 6 12 12"></path><path d="M18 6 6 18"></path></svg>
+      </button>
+    </div>
+    <form id="syncForm" novalidate>
+      <div class="modal-body">
+        <input type="hidden" id="syncIntegrationId" name="syncIntegrationId">
+        <div class="form-grid">
+          <div class="field full">
+            <label for="syncMode">Sync mode</label>
+            <select class="select" id="syncMode" name="syncMode">
+              <option value="incremental">Incremental sync</option>
+              <option value="full">Full refresh</option>
+            </select>
+            <div class="field-hint">A full refresh replaces cached source data but does not delete unified jobs.</div>
+          </div>
+          <div class="field full">
+            <div class="toggle-row">
+              <label for="runMatchingToggle">Run matching after sync</label>
+              <span class="switch"><input type="checkbox" id="runMatchingToggle" checked><span class="switch-track"></span></span>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button class="btn btn-secondary" type="button" data-close-modal="notificationModal">Cancel</button>
+        <button class="btn btn-primary" type="submit" id="syncSubmitButton">Start sync</button>
+      </div>
+    </form>
+  </div>
+</div>
+
+<div class="modal-backdrop hidden" id="deleteModal" role="dialog" aria-modal="true" aria-labelledby="deleteModalTitle">
+  <div class="modal small">
+    <div class="modal-header">
+      <div class="modal-header-copy">
+        <h2 id="deleteModalTitle">Delete unified job?</h2>
+        <p>This removes the local record. Connected-system source data is not affected.</p>
+      </div>
+      <button class="modal-close" data-close-modal="deleteModal" aria-label="Close delete confirmation">
+        <svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><path d="m6 6 12 12"></path><path d="M18 6 6 18"></path></svg>
+      </button>
+    </div>
+    <div class="modal-body">
+      <input type="hidden" id="deletingJobId">
+      <div class="alert-card" style="box-shadow:none;border-color:#efc8cd">
+        <div class="alert-card-icon" style="color:var(--red-700);background:var(--red-100)">
+          <svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M3 6h18"></path><path d="M8 6V4h8v2"></path><path d="m19 6-1 15H6L5 6"></path><path d="M10 11v5"></path><path d="M14 11v5"></path></svg>
+        </div>
+        <div class="alert-card-body">
+          <h3 id="deleteJobName">Selected job</h3>
+          <p id="deleteJobMessage">This action cannot be undone.</p>
+        </div>
+      </div>
+    </div>
+    <div class="modal-footer">
+      <button class="btn btn-secondary" type="button" data-close-modal="deleteModal">Cancel</button>
+      <button class="btn btn-danger" type="button" id="confirmDeleteButton">Delete job</button>
+    </div>
+  </div>
+</div>
+
+<div class="toast-region" id="toastRegion" aria-live="polite" aria-atomic="true"></div>
+
+<script>
+"use strict";
+
+const STORAGE_KEY = "postback_workspace_v1";
+const APP_VERSION = "1.0.0";
+
+const ICONS = {
+  check: '<svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><path d="m20 6-11 11-5-5"></path></svg>',
+  warning: '<svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M10.3 3.6 2.4 17.1A2 2 0 0 0 4.1 20h15.8a2 2 0 0 0 1.7-2.9L13.7 3.6a2 2 0 0 0-3.4 0Z"></path><path d="M12 9v4"></path><path d="M12 17h.01"></path></svg>',
+  clock: '<svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="9"></circle><path d="M12 7v5l3 2"></path></svg>',
+  dollar: '<svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 2v20"></path><path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"></path></svg>',
+  briefcase: '<svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><rect x="3" y="7" width="18" height="13" rx="2"></rect><path d="M8 7V4h8v3"></path><path d="M3 12h18"></path></svg>',
+  trend: '<svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><path d="m3 17 6-6 4 4 8-8"></path><path d="M15 7h6v6"></path></svg>',
+  spark: '<svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><path d="m12 3 1.4 4.6L18 9l-4.6 1.4L12 15l-1.4-4.6L6 9l4.6-1.4L12 3Z"></path><path d="m19 15 .8 2.2L22 18l-2.2.8L19 21l-.8-2.2L16 18l2.2-.8L19 15Z"></path></svg>',
+  link: '<svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M10 13a5 5 0 0 0 7.1.1l2-2a5 5 0 0 0-7.1-7.1l-1.1 1.1"></path><path d="M14 11a5 5 0 0 0-7.1-.1l-2 2A5 5 0 0 0 12 20l1.1-1.1"></path></svg>',
+  sync: '<svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M20 7h-5V2"></path><path d="M20 7a9 9 0 0 0-15.5-2.4L3 6"></path><path d="M4 17h5v5"></path><path d="M4 17a9 9 0 0 0 15.5 2.4L21 18"></path></svg>',
+  user: '<svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="8" r="4"></circle><path d="M4 21a8 8 0 0 1 16 0"></path></svg>',
+  map: '<svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M20 10c0 5-8 11-8 11S4 15 4 10a8 8 0 1 1 16 0Z"></path><circle cx="12" cy="10" r="2.5"></circle></svg>',
+  edit: '<svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 20h9"></path><path d="M16.5 3.5a2.1 2.1 0 0 1 3 3L8 18l-4 1 1-4L16.5 3.5Z"></path></svg>',
+  trash: '<svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M3 6h18"></path><path d="M8 6V4h8v2"></path><path d="m19 6-1 15H6L5 6"></path></svg>',
+  eye: '<svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M2 12s3.5-7 10-7 10 7 10 7-3.5 7-10 7S2 12 2 12Z"></path><circle cx="12" cy="12" r="3"></circle></svg>',
+  inbox: '<svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M4 4h16v16H4z"></path><path d="M4 13h4l2 3h4l2-3h4"></path></svg>',
+  arrow: '<svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M5 12h14"></path><path d="m13 6 6 6-6 6"></path></svg>',
+  calendar: '<svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><rect x="3" y="5" width="18" height="16" rx="2"></rect><path d="M16 3v4"></path><path d="M8 3v4"></path><path d="M3 10h18"></path></svg>',
+  info: '<svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="9"></circle><path d="M12 11v5"></path><path d="M12 8h.01"></path></svg>',
+  mail: '<svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><rect x="3" y="5" width="18" height="14" rx="2"></rect><path d="m3 7 9 6 9-6"></path></svg>'
+};
+
+const PROVIDER_META = {
+  "ServiceTitan": { category: "Field service", color: "#293b5f", initials: "ST" },
+  "Housecall Pro": { category: "Field service", color: "#d7662a", initials: "HP" },
+  "Jobber": { category: "Field service", color: "#27a66b", initials: "J" },
+  "QuickBooks": { category: "Accounting", color: "#2ca01c", initials: "qb" },
+  "Xero": { category: "Accounting", color: "#13b5ea", initials: "X" },
+  "HubSpot": { category: "CRM", color: "#ff7a59", initials: "H" },
+  "Salesforce": { category: "CRM", color: "#0d9dda", initials: "SF" },
+  "Stripe": { category: "Payments", color: "#635bff", initials: "S" },
+  "Square": { category: "Payments", color: "#111111", initials: "■" },
+  "Slack": { category: "Alerts", color: "#611f69", initials: "#" }
+};
+
+const VIEW_META = {
+  dashboard: ["Dashboard", "Reconciliation overview"],
+  jobs: ["Unified jobs", "Search and manage reconciled records"],
+  exceptions: ["Exceptions", "Resolve record conflicts and gaps"],
+  reports: ["Reports", "Revenue and record readiness"],
+  integrations: ["Integrations", "Connected business systems"],
+  settings: ["Settings", "Workspace configuration"]
+};
+
+function isoDate(offsetDays = 0) {
+  const date = new Date();
+  date.setHours(12, 0, 0, 0);
+  date.setDate(date.getDate() - offsetDays);
+  return date.toISOString().slice(0, 10);
+}
+
+function isoTimestamp(offsetDays = 0, hour = 10) {
+  const date = new Date();
+  date.setDate(date.getDate() - offsetDays);
+  date.setHours(hour, 15, 0, 0);
+  return date.toISOString();
+}
+
+function createSeedState() {
+  const now = new Date();
+  const integrationNames = ["ServiceTitan", "QuickBooks", "Stripe", "HubSpot"];
+  const integrationColors = ["#293b5f", "#2ca01c", "#635bff", "#ff7a59"];
+  const integrationInitials = ["ST", "qb", "S", "H"];
+  const integrationCategories = ["Field service", "Accounting", "Payments", "CRM"];
+  const integrationStatuses = ["connected", "connected", "connected", "syncing"];
+
+  return {
+    version: APP_VERSION,
+    company: {
+      name: "Northstar Services",
+      timezone: "America/Chicago",
+      operationsEmail: "operations@northstar.example"
+    },
+    settings: {
+      autoMatchThreshold: 85,
+      matchFields: "Customer name, service address, completion date, technician, invoice amount, external IDs",
+      dateTolerance: 1,
+      addressMatching: true,
+      notifyHigh: true,
+      notifyMissingInvoices: true,
+      notifyDuplicates: true,
+      notifyWeekly: true,
+      alertDigestTime: "16:00",
+      weeklyDay: "friday",
+      retentionMonths: 24,
+      emailAlerts: true,
+      slackAlerts: true
+    },
+    integrations: integrationNames.map((name, index) => ({
+      id: `int-${index + 1}`,
+      name,
+      category: integrationCategories[index],
+      status: integrationStatuses[index],
+      account: name === "ServiceTitan" ? "Northstar Field Operations" : name === "QuickBooks" ? "Northstar Services LLC" : name === "Stripe" ? "Northstar Services" : "Northstar Home Services",
+      color: integrationColors[index],
+      initials: integrationInitials[index],
+      lastSync: isoTimestamp(index === 3 ? 0 : index + 1, 9 + index),
+      records: [482, 451, 438, 291][index],
+      syncedRecords: [482, 451, 438, 289][index],
+      errors: index === 3 ? 2 : 0
+    })),
+    jobs: [
+      {
+        id: "job-1001",
+        title: "Water heater replacement",
+        customer: "Maya Thompson",
+        address: "1842 Oakview Dr, St. Louis, MO 63126",
+        date: isoDate(0),
+        technician: "Marcus Reed",
+        amount: 2890,
+        paymentStatus: "paid",
+        status: "matched",
+        matchQuality: "exact",
+        notes: "Replaced failed 50-gallon gas water heater. Installed new expansion tank, tested gas pressure, and flushed the domestic water loop.",
+        fieldServiceId: "FS-10482",
+        invoiceNumber: "INV-2091",
+        crmId: "OPP-7812",
+        accountingId: "TXN-55091",
+        createdAt: isoTimestamp(0, 8),
+        updatedAt: isoTimestamp(0, 11)
+      },
+      {
+        id: "job-1002",
+        title: "Annual HVAC maintenance",
+        customer: "Westbrook Dental Group",
+        address: "2210 Olive Blvd, St. Louis, MO 63110",
+        date: isoDate(1),
+        technician: "Elena Torres",
+        amount: 685,
+        paymentStatus: "outstanding",
+        status: "matched",
+        matchQuality: "exact",
+        notes: "Completed 24-point preventive maintenance, replaced two filters, verified refrigerant charge, and reviewed thermostat settings with the office manager.",
+        fieldServiceId: "FS-10478",
+        invoiceNumber: "INV-2088",
+        crmId: "OPP-7804",
+        accountingId: "TXN-55084",
+        createdAt: isoTimestamp(1, 7),
+        updatedAt: isoTimestamp(0, 9)
+      },
+      {
+        id: "job-1003",
+        title: "Electrical panel inspection",
+        customer: "Daniel Brooks",
+        address: "728 Lynford Ct, Kirkwood, MO 63122",
+        date: isoDate(2),
+        technician: "Jake Miller",
+        amount: 475,
+        paymentStatus: "overdue",
+        status: "needs-review",
+        matchQuality: "fuzzy",
+        notes: "Inspected panel and identified two double-tapped breakers. Provided written safety recommendations and quote for replacement.",
+        fieldServiceId: "FS-10461",
+        invoiceNumber: "INV-2075",
+        crmId: "",
+        accountingId: "TXN-55060",
+        createdAt: isoTimestamp(2, 10),
+        updatedAt: isoTimestamp(0, 8)
+      },
+      {
+        id: "job-1004",
+        title: "Furnace diagnostic",
+        customer: "Priya Shah",
+        address: "4409 Clayton Ave, St. Louis, MO 63110",
+        date: isoDate(3),
+        technician: "Marcus Reed",
+        amount: 249,
+        paymentStatus: "outstanding",
+        status: "unmatched",
+        matchQuality: "fuzzy",
+        notes: "Diagnosed failed blower motor and confirmed control board issue. Repair not authorized; customer requested callback.",
+        fieldServiceId: "FS-10443",
+        invoiceNumber: "INV-2068",
+        crmId: "OPP-7742",
+        accountingId: "",
+        createdAt: isoTimestamp(3, 14),
+        updatedAt: isoTimestamp(1, 7)
+      },
+      {
+        id: "job-1005",
+        title: "Kitchen faucet installation",
+        customer: "Nora & James Ellis",
+        address: "912 Hampton Ave, St. Louis, MO 63109",
+        date: isoDate(4),
+        technician: "Elena Torres",
+        amount: 398,
+        paymentStatus: "paid",
+        status: "matched",
+        matchQuality: "manual",
+        notes: "Installed customer-supplied pull-down faucet, replaced supply lines, verified shutoffs, and cleaned the work area.",
+        fieldServiceId: "FS-10422",
+        invoiceNumber: "INV-2059",
+        crmId: "OPP-7725",
+        accountingId: "TXN-55024",
+        createdAt: isoTimestamp(4, 9),
+        updatedAt: isoTimestamp(1, 12)
+      },
+      {
+        id: "job-1006",
+        title: "Sewer line camera inspection",
+        customer: "Riverside Apartments LLC",
+        address: "1615 Riverside Dr, St. Louis, MO 63106",
+        date: isoDate(5),
+        technician: "Sam Brooks",
+        amount: 525,
+        paymentStatus: "outstanding",
+        status: "incomplete",
+        matchQuality: "manual",
+        notes: "Camera inspection completed for building A. Report uploaded to the field-service system. Customer requested full plumbing report by email.",
+        fieldServiceId: "FS-10398",
+        invoiceNumber: "",
+        crmId: "OPP-7691",
+        accountingId: "",
+        createdAt: isoTimestamp(5, 11),
+        updatedAt: isoTimestamp(1, 10)
+      },
+      {
+        id: "job-1007",
+        title: "Thermostat replacement",
+        customer: "Olivia Hart",
+        address: "35 Northwood Dr, Ballwin, MO 63021",
+        date: isoDate(6),
+        technician: "Jake Miller",
+        amount: 325,
+        paymentStatus: "paid",
+        status: "matched",
+        matchQuality: "exact",
+        notes: "Replaced legacy thermostat with programmable smart thermostat. Paired the app and demonstrated basic scheduling.",
+        fieldServiceId: "FS-10376",
+        invoiceNumber: "INV-2041",
+        crmId: "OPP-7668",
+        accountingId: "TXN-54998",
+        createdAt: isoTimestamp(6, 8),
+        updatedAt: isoTimestamp(2, 15)
+      },
+      {
+        id: "job-1008",
+        title: "Generator service and load test",
+        customer: "Pine Ridge Community",
+        address: "802 Pine Ridge Ln, Maryland Heights, MO 63043",
+        date: isoDate(8),
+        technician: "Marcus Reed",
+        amount: 1180,
+        paymentStatus: "paid",
+        status: "matched",
+        matchQuality: "exact",
+        notes: "Performed scheduled maintenance, oil and filter service, battery inspection, and 45-minute full load test. Unit passed.",
+        fieldServiceId: "FS-10342",
+        invoiceNumber: "INV-2028",
+        crmId: "OPP-7604",
+        accountingId: "TXN-54970",
+        createdAt: isoTimestamp(8, 13),
+        updatedAt: isoTimestamp(2, 9)
+      },
+      {
+        id: "job-1009",
+        title: "Commercial drain cleaning",
+        customer: "Juniper Coffee Co.",
+        address: "117 Market St, St. Louis, MO 63103",
+        date: isoDate(10),
+        technician: "Sam Brooks",
+        amount: 760,
+        paymentStatus: "outstanding",
+        status: "needs-review",
+        matchQuality: "fuzzy",
+        notes: "Hydro-jeted main floor drain and two restroom drains. Removed scale and grease buildup. Invoice amount differs from CRM estimate.",
+        fieldServiceId: "FS-10295",
+        invoiceNumber: "INV-1997",
+        crmId: "OPP-7512",
+        accountingId: "TXN-54887",
+        createdAt: isoTimestamp(10, 16),
+        updatedAt: isoTimestamp(3, 14)
+      },
+      {
+        id: "job-1010",
+        title: "Heat pump replacement",
+        customer: "Laura Nguyen",
+        address: "6700 Gravois Rd, St. Louis, MO 63123",
+        date: isoDate(12),
+        technician: "Elena Torres",
+        amount: 6240,
+        paymentStatus: "paid",
+        status: "matched",
+        matchQuality: "exact",
+        notes: "Installed 3-ton variable-speed heat pump, new thermostat, condensate pump, and disconnect. Performed startup checks and customer walkthrough.",
+        fieldServiceId: "FS-10241",
+        invoiceNumber: "INV-1972",
+        crmId: "OPP-7420",
+        accountingId: "TXN-54812",
+        createdAt: isoTimestamp(12, 14),
+        updatedAt: isoTimestamp(4, 10)
+      },
+      {
+        id: "job-1011",
+        title: "Garbage disposal replacement",
+        customer: "Aaron Mitchell",
+        address: "1448 Feldkamp Rd, St. Louis, MO 63123",
+        date: isoDate(14),
+        technician: "Jake Miller",
+        amount: 510,
+        paymentStatus: "overdue",
+        status: "needs-review",
+        matchQuality: "fuzzy",
+        notes: "Removed failed disposal and installed 1/2 HP replacement. Existing power wiring required an additional safety check.",
+        fieldServiceId: "FS-10184",
+        invoiceNumber: "INV-1938",
+        crmId: "OPP-7311",
+        accountingId: "TXN-54710",
+        createdAt: isoTimestamp(14, 15),
+        updatedAt: isoTimestamp(4, 8)
+      },
+      {
+        id: "job-1012",
+        title: "Backflow prevention test",
+        customer: "Oak Park Restaurant",
+        address: "7438 Natural Bridge Rd, St. Louis, MO 63121",
+        date: isoDate(16),
+        technician: "Marcus Reed",
+        amount: 185,
+        paymentStatus: "paid",
+        status: "matched",
+        matchQuality: "exact",
+        notes: "Completed annual backflow test. Device passed and test certificate was uploaded to the service record.",
+        fieldServiceId: "FS-10122",
+        invoiceNumber: "INV-1904",
+        crmId: "OPP-7252",
+        accountingId: "TXN-54620",
+        createdAt: isoTimestamp(16, 9),
+        updatedAt: isoTimestamp(5, 11)
+      },
+      {
+        id: "job-1013",
+        title: "Bathroom fan and lighting repair",
+        customer: "Sophia Chen",
+        address: "5530 Gravois Rd, St. Louis, MO 63123",
+        date: isoDate(19),
+        technician: "Elena Torres",
+        amount: 315,
+        paymentStatus: "outstanding",
+        status: "unmatched",
+        matchQuality: "fuzzy",
+        notes: "Replaced bathroom exhaust fan and two damp-rated light fixtures. No matching CRM opportunity found.",
+        fieldServiceId: "FS-10066",
+        invoiceNumber: "INV-1861",
+        crmId: "",
+        accountingId: "",
+        createdAt: isoTimestamp(19, 10),
+        updatedAt: isoTimestamp(6, 9)
+      },
+      {
+        id: "job-1014",
+        title: "Boiler annual service",
+        customer: "St. Agnes Retirement Home",
+        address: "8440 Watson Rd, St. Louis, MO 63119",
+        date: isoDate(22),
+        technician: "Marcus Reed",
+        amount: 1425,
+        paymentStatus: "paid",
+        status: "matched",
+        matchQuality: "manual",
+        notes: "Completed annual service on two atmospheric boilers. Adjusted combustion, tested safety controls, and submitted inspection results.",
+        fieldServiceId: "FS-9988",
+        invoiceNumber: "INV-1802",
+        crmId: "OPP-7051",
+        accountingId: "TXN-54370",
+        createdAt: isoTimestamp(22, 14),
+        updatedAt: isoTimestamp(8, 12)
+      },
+      {
+        id: "job-1015",
+        title: "Emergency leak shutdown",
+        customer: "Horizon Dental Studio",
+        address: "12840 Olive Blvd, Creve Coeur, MO 63141",
+        date: isoDate(26),
+        technician: "Sam Brooks",
+        amount: 880,
+        paymentStatus: "outstanding",
+        status: "matched",
+        matchQuality: "fuzzy",
+        notes: "Shut off supply, replaced failed braided line, pressure tested repair, and cleaned affected cabinetry.",
+        fieldServiceId: "FS-9872",
+        invoiceNumber: "INV-1744",
+        crmId: "OPP-6920",
+        accountingId: "TXN-54115",
+        createdAt: isoTimestamp(26, 19),
+        updatedAt: isoTimestamp(10, 8)
+      }
+    ],
+    exceptions: [
+      {
+        id: "exc-501",
+        jobId: "job-1003",
+        type: "Amount conflict",
+        title: "Invoice and accounting amounts differ",
+        description: "QuickBooks lists $475.00 while ServiceTitan lists $520.00 for the same external invoice reference.",
+        priority: "high",
+        status: "open",
+        recommendation: "Use the accounting amount of $475.00 and update the field-service record.",
+        recommendationAction: "accept-right",
+        fields: [
+          { label: "Customer", left: "Daniel Brooks", right: "Daniel Brooks", conflict: false },
+          { label: "Invoice", left: "INV-2075", right: "INV-2075", conflict: false },
+          { label: "Amount", left: "$520.00", right: "$475.00", conflict: true },
+          { label: "Date", left: isoDate(2), right: isoDate(2), conflict: false }
+        ],
+        createdAt: isoTimestamp(0, 8),
+        resolvedAt: null,
+        resolutionNote: ""
+      },
+      {
+        id: "exc-502",
+        jobId: "job-1004",
+        type: "Missing CRM match",
+        title: "Completed job has no CRM opportunity",
+        description: "The field-service job and invoice are linked, but no CRM opportunity was found within the configured date tolerance.",
+        priority: "medium",
+        status: "open",
+        recommendation: "Create a new CRM opportunity or link an existing record for Priya Shah.",
+        recommendationAction: "use-crm",
+        fields: [
+          { label: "Customer", left: "Priya Shah", right: "No match", conflict: true },
+          { label: "Address", left: "4409 Clayton Ave", right: "No match", conflict: true },
+          { label: "Amount", left: "$249.00", right: "No match", conflict: true },
+          { label: "Date", left: isoDate(3), right: "No match", conflict: true }
+        ],
+        createdAt: isoTimestamp(1, 7),
+        resolvedAt: null,
+        resolutionNote: ""
+      },
+      {
+        id: "exc-503",
+        jobId: "job-1006",
+        type: "Missing invoice",
+        title: "Completed job has no invoice",
+        description: "A $525.00 sewer inspection is marked complete in ServiceTitan, but no invoice exists in the accounting system.",
+        priority: "high",
+        status: "open",
+        recommendation: "Mark the invoice missing and create an invoice follow-up for the accounting team.",
+        recommendationAction: "create-invoice",
+        fields: [
+          { label: "Customer", left: "Riverside Apartments LLC", right: "No match", conflict: true },
+          { label: "Invoice", left: "No invoice", right: "No invoice", conflict: true },
+          { label: "Amount", left: "$525.00", right: "No match", conflict: true },
+          { label: "Date", left: isoDate(5), right: "No match", conflict: true }
+        ],
+        createdAt: isoTimestamp(1, 10),
+        resolvedAt: null,
+        resolutionNote: ""
+      },
+      {
+        id: "exc-504",
+        jobId: "job-1009",
+        type: "Amount conflict",
+        title: "CRM estimate does not match final invoice",
+        description: "CRM shows $695.00 and the final invoice is $760.00. A scope-change note is missing from the CRM record.",
+        priority: "medium",
+        status: "open",
+        recommendation: "Accept the final invoice amount and add the scope change to the CRM activity.",
+        recommendationAction: "accept-right",
+        fields: [
+          { label: "Customer", left: "Juniper Coffee Co.", right: "Juniper Coffee Co.", conflict: false },
+          { label: "Amount", left: "$695.00", right: "$760.00", conflict: true },
+          { label: "Invoice", left: "INV-1997", right: "INV-1997", conflict: false },
+          { label: "Date", left: isoDate(10), right: isoDate(10), conflict: false }
+        ],
+        createdAt: isoTimestamp(2, 14),
+        resolvedAt: null,
+        resolutionNote: ""
+      },
+      {
+        id: "exc-505",
+        jobId: "job-1011",
+        type: "Incomplete record",
+        title: "Technician notes are missing",
+        description: "The invoice and accounting payment are linked, but the field-service completion notes could not be retrieved.",
+        priority: "medium",
+        status: "open",
+        recommendation: "Request completion notes from the technician or add them manually before closing the job.",
+        recommendationAction: "ignore",
+        fields: [
+          { label: "Customer", left: "Aaron Mitchell", right: "Aaron Mitchell", conflict: false },
+          { label: "Invoice", left: "INV-1938", right: "INV-1938", conflict: false },
+          { label: "Notes", left: "Retrieved", right: "Not returned", conflict: true },
+          { label: "Amount", left: "$510.00", right: "$510.00", conflict: false }
+        ],
+        createdAt: isoTimestamp(3, 8),
+        resolvedAt: null,
+        resolutionNote: ""
+      },
+      {
+        id: "exc-506",
+        jobId: "job-1013",
+        type: "Duplicate candidate",
+        title: "Possible duplicate bathroom repair",
+        description: "Two records have the same customer, address, service type, and amount within four days. One invoice may be duplicated.",
+        priority: "high",
+        status: "open",
+        recommendation: "Keep INV-1861 and remove the duplicate field-service record before payment.",
+        recommendationAction: "remove-duplicate",
+        fields: [
+          { label: "Customer", left: "Sophia Chen", right: "Sophia Chen", conflict: false },
+          { label: "Address", left: "5530 Gravois Rd", right: "5530 Gravois Rd", conflict: false },
+          { label: "Amount", left: "$315.00", right: "$315.00", conflict: false },
+          { label: "Date", left: isoDate(19), right: isoDate(23), conflict: true }
+        ],
+        createdAt: isoTimestamp(4, 9),
+        resolvedAt: null,
+        resolutionNote: ""
+      },
+      {
+        id: "exc-507",
+        jobId: "job-1015",
+        type: "Missing accounting link",
+        title: "Invoice is not posted to accounting",
+        description: "An $880.00 invoice is open in QuickBooks but has no transaction reference in the unified accounting ledger.",
+        priority: "low",
+        status: "open",
+        recommendation: "Wait for the next accounting sync or manually verify the transaction reference.",
+        recommendationAction: "ignore",
+        fields: [
+          { label: "Customer", left: "Horizon Dental Studio", right: "Horizon Dental Studio", conflict: false },
+          { label: "Invoice", left: "INV-1744", right: "INV-1744", conflict: false },
+          { label: "Amount", left: "$880.00", right: "$880.00", conflict: false },
+          { label: "Transaction", left: "Pending", right: "Missing", conflict: true }
+        ],
+        createdAt: isoTimestamp(6, 11),
+        resolvedAt: null,
+        resolutionNote: ""
+      },
+      {
+        id: "exc-508",
+        jobId: "job-1005",
+        type: "Manual confirmation",
+        title: "Likely duplicate reviewed",
+        description: "The customer confirmed the two records represent two faucets at separate properties.",
+        priority: "low",
+        status: "resolved",
+        recommendation: "Retain both records because the addresses differ by property number.",
+        recommendationAction: "ignore",
+        fields: [
+          { label: "Customer", left: "Nora & James Ellis", right: "Nora & James Ellis", conflict: false },
+          { label: "Address", left: "912 Hampton Ave", right: "912 Hampton Ave", conflict: false },
+          { label: "Invoice", left: "INV-2059", right: "INV-2059", conflict: false },
+          { label: "Decision", left: "Keep both", right: "Confirmed", conflict: false }
+        ],
+        createdAt: isoTimestamp(7, 8),
+        resolvedAt: isoTimestamp(1, 12),
+        resolutionNote: "Customer confirmed both service visits were valid."
+      }
+    ],
+    activities: [
+      { id: "act-1", type: "match", text: "Matched <strong>Water heater replacement</strong> across 4 systems", time: isoTimestamp(0, 11) },
+      { id: "act-2", type: "alert", text: "Flagged a <strong>$45 amount conflict</strong> for Daniel Brooks", time: isoTimestamp(0, 8) },
+      { id: "act-3", type: "sync", text: "<strong>Stripe</strong> sync imported 14 payment updates", time: isoTimestamp(0, 7) },
+      { id: "act-4", type: "resolve", text: "Resolved duplicate candidate for <strong>Nora & James Ellis</strong>", time: isoTimestamp(1, 12) }
+    ],
+    notificationsRead: false,
+    lastGlobalSync: isoTimestamp(0, 7),
+    auditLog: []
+  };
+}
+
+let state = loadState();
+let currentView = "dashboard";
+let currentExceptionId = null;
+let currentExceptionStatus = "open";
+let jobsPage = 1;
+let jobsPageSize = 8;
+let appModalReturnFocus = null;
+let syncingIntegrationId = null;
+
+function cloneSeedState() {
+  return JSON.parse(JSON.stringify(createSeedState()));
+}
+
+function loadState() {
+  try {
+    const raw = localStorage.getItem(STORAGE_KEY);
+    if (!raw) {
+      const seed = createSeedState();
+      localStorage.setItem(STORAGE_KEY, JSON.stringify(seed));
+      return seed;
+    }
+    const parsed = JSON.parse(raw);
+    return normalizeState(parsed);
+  } catch (error) {
+    console.error("Unable to load Postback state", error);
+    return createSeedState();
+  }
+}
+
+function normalizeState(input) {
+  const seed = createSeedState();
+  return {
+    ...seed,
+    ...input,
+    version: APP_VERSION,
+    company: { ...seed.company, ...(input.company || {}) },
+    settings: { ...seed.settings, ...(input.settings || {}) },
+    integrations: Array.isArray(input.integrations) ? input.integrations : seed.integrations,
+    jobs: Array.isArray(input.jobs) ? input.jobs : seed.jobs,
+    exceptions: Array.isArray(input.exceptions) ? input.exceptions : seed.exceptions,
+    activities: Array.isArray(input.activities) ? input.activities : seed.activities,
+    auditLog: Array.isArray(input.auditLog) ? input.auditLog : []
+  };
+}
+
+function saveState() {
+  try {
+    localStorage.setItem(STORAGE_KEY, JSON.stringify(state));
+    updateGlobalCounts();
+  } catch (error) {
+    console.error("Unable to save state", error);
+    showToast("Storage error", "Your changes could not be saved in this browser.", "error");
+  }
+}
+
+function escapeHtml(value) {
+  return String(value ?? "")
+    .replaceAll("&", "&amp;")
+    .replaceAll("<", "&lt;")
+    .replaceAll(">", "&gt;")
+    .replaceAll('"', "&quot;")
+    .replaceAll("'", "&#039;");
+}
+
+function escapeAttr(value) {
+  return escapeHtml(value).replaceAll("`", "&#096;");
+}
+
+function normalizeSearch(value) {
+  return String(value || "")
+    .toLowerCase()
+    .normalize("NFD")
+    .replace(/[\u0300-\u036f]/g, "")
+    .replace(/[^a-z0-9]+/g, " ")
+    .trim();
+}
+
+function formatCurrency(value, compact = false) {
+  const amount = Number(value || 0);
+  return new Intl.NumberFormat("en-US", {
+    style: "currency",
+    currency: "USD",
+    maximumFractionDigits: compact ? 0 : 2,
+    notation: compact && Math.abs(amount) >= 10000 ? "compact" : "standard"
+  }).format(amount);
+}
+
+function formatCurrencyShort(value) {
+  const amount = Number(value || 0);
+  if (Math.abs(amount) >= 1000) {
+    return new Intl.NumberFormat("en-US", {
+      style: "currency",
+      currency: "USD",
+      notation: "compact",
+      maximumFractionDigits: 1
+    }).format(amount);
+  }
+  return formatCurrency(amount);
+}
+
+function titleCase(value) {
+  return String(value || "")
+    .replaceAll("-", " ")
+    .replace(/\b\w/g, letter => letter.toUpperCase());
+}
+
+function statusPill(status) {
+  const labelMap = {
+    "needs-review": "Needs review",
+    "outstanding": "Outstanding",
+    "paid": "Paid",
+    "overdue": "Overdue",
+    "matched": "Matched",
+    "unmatched": "Unmatched",
+    "incomplete": "Incomplete",
+    "connected": "Connected",
+    "disconnected": "Disconnected",
+    "syncing": "Syncing",
+    "failed": "Failed",
+    "pending": "Pending"
+  };
+  return `<span class="status-pill ${escapeAttr(status)}">${escapeHtml(labelMap[status] || titleCase(status))}</span>`;
+}
+
+function relativeTime(timestamp) {
+  if (!timestamp) return "Unknown time";
+  const difference = Date.now() - new Date(timestamp).getTime();
+  const minutes = Math.max(0, Math.floor(difference / 60000));
+  if (minutes < 1) return "Just now";
+  if (minutes < 60) return `${minutes}m ago`;
+  const hours = Math.floor(minutes / 60);
+  if (hours < 24) return `${hours}h ago`;
+  const days = Math.floor(hours / 24);
+  if (days < 7) return `${days}d ago`;
+  return new Intl.DateTimeFormat("en-US", { month: "short", day: "numeric" }).format(new Date(timestamp));
+}
+
+function longDate(dateString) {
+  if (!dateString) return "—";
+  const normalized = dateString.includes("T") ? dateString : `${dateString}T12:00:00`;
+  const date = new Date(normalized);
+  if (Number.isNaN(date.getTime())) return dateString;
+  return new Intl.DateTimeFormat("en-US", {
+    month: "short",
+    day: "numeric",
+    year: "numeric"
+  }).format(date);
+}
+
+function updateGlobalCounts() {
+  const jobsCount = document.getElementById("jobsNavCount");
+  const exceptionsCount = document.getElementById("exceptionsNavCount");
+  const connectionsCount = document.getElementById("connectionsNavCount");
+  if (jobsCount) jobsCount.textContent = state.jobs.length;
+  if (exceptionsCount) exceptionsCount.textContent = state.exceptions.filter(item => item.status === "open").length;
+  if (connectionsCount) connectionsCount.textContent = `${state.integrations.filter(item => item.status === "connected" || item.status === "syncing").length}/${state.integrations.length}`;
+}
+
+function showView(viewName) {
+  const target = document.querySelector(`[data-view-panel="${viewName}"]`);
+  if (!target) return;
+  currentView = viewName;
+  document.querySelectorAll("[data-view-panel]").forEach(panel => {
+    panel.classList.toggle("hidden", panel !== target);
+  });
+  document.querySelectorAll(".nav-item[data-view]").forEach(button => {
+    const active = button.dataset.view === viewName;
+    button.classList.toggle("active", active);
+    button.setAttribute("aria-current", active ? "page" : "false");
+  });
+  const meta = VIEW_META[viewName] || ["Postback", "Workspace"];
+  document.getElementById("topbarTitle").textContent = meta[0];
+  document.getElementById("topbarSubtitle").textContent = meta[1];
+  document.title = `${meta[0]} — Postback`;
+  closeSidebar();
+  window.scrollTo({ top: 0, behavior: "smooth" });
+  renderCurrentView();
+}
+
+function renderCurrentView() {
+  switch (currentView) {
+    case "dashboard":
+      renderDashboard();
+      break;
+    case "jobs":
+      renderJobsTable();
+      break;
+    case "exceptions":
+      renderExceptions();
+      break;
+    case "integrations":
+      renderIntegrations();
+      break;
+    case "reports":
+      renderReports();
+      break;
+    case "settings":
+      populateSettingsForms();
+      break;
+    default:
+      renderDashboard();
+  }
+}
+
+function renderDashboard() {
+  renderDashboardMetrics();
+  renderRevenueChart();
+  renderPriorityExceptions();
+  renderSystemHealth();
+  renderRecentActivity();
+  updateGlobalCounts();
+}
+
+function getDashboardStats() {
+  const matchedJobs = state.jobs.filter(job => job.status === "matched");
+  const paidJobs = state.jobs.filter(job => job.paymentStatus === "paid");
+  const outstandingJobs = state.jobs.filter(job => job.paymentStatus === "outstanding" || job.paymentStatus === "overdue");
+  const openExceptions = state.exceptions.filter(item => item.status === "open");
+  const matchedRevenue = matchedJobs.reduce((total, job) => total + Number(job.amount || 0), 0);
+  const collectedRevenue = paidJobs.reduce((total, job) => total + Number(job.amount || 0), 0);
+  const outstandingRevenue = outstandingJobs.reduce((total, job) => total + Number(job.amount || 0), 0);
+  const highPriority = openExceptions.filter(item => item.priority === "high").length;
+  const readiness = state.jobs.length ? Math.round((matchedJobs.length / state.jobs.length) * 100) : 0;
+  const estimatedHours = Math.max(0, (state.jobs.length * .42) + (openExceptions.length * .28));
+  return {
+    matchedJobs,
+    paidJobs,
+    outstandingJobs,
+    openExceptions,
+    matchedRevenue,
+    collectedRevenue,
+    outstandingRevenue,
+    highPriority,
+    readiness,
+    estimatedHours,
+    automationRate: state.jobs.length ? Math.round((matchedJobs.length / state.jobs.length) * 100) : 0
+  };
+}
+
+function renderDashboardMetrics() {
+  const stats = getDashboardStats();
+  const metrics = [
+    {
+      label: "Matched revenue",
+      value: formatCurrencyShort(stats.matchedRevenue),
+      change: "+12.4%",
+      detail: `${stats.matchedJobs.length} records fully reconciled`,
+      icon: "dollar",
+      color: "var(--blue-700)",
+      tint: "var(--blue-100)",
+      changeClass: "positive"
+    },
+    {
+      label: "Records automated",
+      value: `${stats.automationRate}%`,
+      change: "+8.1%",
+      detail: `${stats.matchedJobs.length} of ${state.jobs.length} completed jobs`,
+      icon: "spark",
+      color: "var(--purple-700)",
+      tint: "var(--purple-100)",
+      changeClass: "positive"
+    },
+    {
+      label: "Outstanding balance",
+      value: formatCurrencyShort(stats.outstandingRevenue),
+      change: `${stats.outstandingJobs.length} records`,
+      detail: `${state.jobs.filter(job => job.paymentStatus === "overdue").length} overdue`,
+      icon: "clock",
+      color: "var(--amber-700)",
+      tint: "var(--amber-100)",
+      changeClass: "warning"
+    },
+    {
+      label: "Open exceptions",
+      value: stats.openExceptions.length,
+      change: `${stats.highPriority} high priority`,
+      detail: `~${stats.estimatedHours.toFixed(1)} manual hours avoided`,
+      icon: "warning",
+      color: "var(--red-700)",
+      tint: "var(--red-100)",
+      changeClass: stats.highPriority ? "warning" : "neutral"
+    }
+  ];
+
+  document.getElementById("dashboardMetrics").innerHTML = metrics.map(metric => `
+    <article class="metric-card" style="--metric-color:${metric.color};--metric-tint:${metric.tint}">
+      <div class="metric-top">
+        <span class="metric-icon">${ICONS[metric.icon]}</span>
+        <span>${metric.label}</span>
+      </div>
+      <div class="metric-value">
+        <strong>${metric.value}</strong>
+        <span class="metric-change ${metric.changeClass}">${metric.change}</span>
+      </div>
+      <div class="metric-detail">${metric.detail}</div>
+    </article>
+  `).join("");
+}
+
+function getWeeklyChartData(days) {
+  const buckets = [];
+  const bucketCount = days <= 30 ? 4 : days <= 90 ? 7 : 9;
+  const bucketSize = days / bucketCount;
+  for (let index = 0; index < bucketCount; index += 1) {
+    const bucketStart = new Date();
+    bucketStart.setHours(12, 0, 0, 0);
+    bucketStart.setDate(bucketStart.getDate() - Math.floor(days - index * bucketSize));
+    const bucketEnd = new Date(bucketStart);
+    bucketEnd.setDate(bucketEnd.getDate() + Math.max(1, Math.ceil(bucketSize)));
+    const jobs = state.jobs.filter(job => {
+      const date = new Date(`${job.date}T12:00:00`);
+      return date >= bucketStart && date < bucketEnd && ["matched", "needs-review", "unmatched", "incomplete"].includes(job.status);
+    });
+    const paid = jobs.filter(job => job.paymentStatus === "paid").reduce((sum, job) => sum + Number(job.amount || 0), 0);
+    const outstanding = jobs.filter(job => job.paymentStatus !== "paid").reduce((sum, job) => sum + Number(job.amount || 0), 0);
+    const endLabel = bucketEnd > new Date() ? new Date() : bucketEnd;
+    buckets.push({
+      paid,
+      outstanding,
+      total: paid + outstanding,
+      label: new Intl.DateTimeFormat("en-US", { month: "short", day: "numeric" }).format(endLabel)
+    });
+  }
+  if (buckets.length < 4) {
+    return buckets.length ? buckets : [{ paid: 0, outstanding: 0, total: 0, label: "No data" }];
+  }
+  return buckets;
+}
+
+function renderRevenueChart() {
+  const range = Number(document.getElementById("chartRange").value || 30);
+  const data = getWeeklyChartData(range);
+  const totalPaid = data.reduce((sum, item) => sum + item.paid, 0);
+  const totalOutstanding = data.reduce((sum, item) => sum + item.outstanding, 0);
+  const max = Math.max(...data.map(item => item.total), 1);
+  const chart = document.getElementById("reconciliationChart");
+
+  chart.innerHTML = `
+    <div class="chart-summary">
+      <div class="chart-amount">${formatCurrency(totalPaid + totalOutstanding)}</div>
+      <div class="chart-period">total value reconciled</div>
+    </div>
+    <div class="chart-area">
+      <div class="y-axis">
+        <span>${formatCurrencyShort(max)}</span>
+        <span>${formatCurrencyShort(max * .66)}</span>
+        <span>${formatCurrencyShort(max * .33)}</span>
+        <span>$0</span>
+      </div>
+      <div class="chart-bars">
+        ${data.map(item => {
+          const paidHeight = item.total ? Math.max(2, (item.paid / max) * 145) : 0;
+          const outstandingHeight = item.total ? Math.max(2, (item.outstanding / max) * 145) : 0;
+          return `
+            <div class="bar-column" title="${escapeAttr(`${item.label}: ${formatCurrency(item.paid)} paid, ${formatCurrency(item.outstanding)} outstanding`)}">
+              <div class="bar-stack">
+                <div class="bar-segment bar-outstanding" style="height:${outstandingHeight}px"></div>
+                <div class="bar-segment bar-paid" style="height:${paidHeight}px"></div>
+              </div>
+              <span class="bar-label">${escapeHtml(item.label)}</span>
+            </div>
+          `;
+        }).join("")}
+      </div>
+    </div>
+    <div class="chart-legend">
+      <span class="legend-item"><span class="legend-dot"></span>Paid · ${formatCurrency(totalPaid)}</span>
+      <span class="legend-item"><span class="legend-dot outstanding"></span>Outstanding · ${formatCurrency(totalOutstanding)}</span>
+    </div>
+  `;
+}
+
+function renderPriorityExceptions() {
+  const container = document.getElementById("priorityExceptions");
+  const priorityRank = { high: 0, medium: 1, low: 2 };
+  const items = state.exceptions
+    .filter(item => item.status === "open")
+    .sort((a, b) => priorityRank[a.priority] - priorityRank[b.priority] || new Date(b.createdAt) - new Date(a.createdAt))
+    .slice(0, 4);
+
+  if (!items.length) {
+    container.innerHTML = `
+      <div class="empty-state">
+        <div>
+          <div class="empty-state-icon">${ICONS.check}</div>
+          <h3>Exceptions cleared</h3>
+          <p>Every completed job is reconciled. New conflicts will appear here automatically.</p>
+        </div>
+      </div>
+    `;
+    return;
+  }
+
+  container.innerHTML = items.map(item => {
+    const job = state.jobs.find(candidate => candidate.id === item.jobId);
+    return `
+      <button class="exception-item" data-open-exception="${escapeAttr(item.id)}" style="width:100%;border-left:0;border-right:0;border-top:0;text-align:left">
+        <span class="exception-icon ${escapeAttr(item.priority)}">${ICONS[item.priority === "high" ? "warning" : item.type === "Missing invoice" ? "inbox" : "link"]}</span>
+        <span class="exception-body">
+          <span class="exception-title-line">
+            <span class="exception-title">${escapeHtml(item.title)}</span>
+            <span class="exception-time">${relativeTime(item.createdAt)}</span>
+          </span>
+          <span class="exception-description">${escapeHtml(item.description)}</span>
+        </span>
+        ${job ? `<span class="exception-value">${formatCurrency(job.amount, true)}</span>` : ""}
+      </button>
+    `;
+  }).join("");
+}
+
+function renderSystemHealth() {
+  const container = document.getElementById("systemHealth");
+  if (!state.integrations.length) {
+    container.innerHTML = `
+      <div class="empty-state" style="min-height:180px">
+        <div>
+          <div class="empty-state-icon">${ICONS.link}</div>
+          <h3>No systems connected</h3>
+          <p>Connect a field-service system to begin importing jobs.</p>
+          <button class="btn btn-secondary btn-sm" data-go="integrations">Connect system</button>
+        </div>
+      </div>
+    `;
+    return;
+  }
+  container.innerHTML = state.integrations.map(integration => {
+    const statusClass = integration.status === "connected" ? "" : integration.status === "syncing" ? "warning" : "offline";
+    const statusText = integration.status === "connected" ? "Healthy" : titleCase(integration.status);
+    return `
+      <div class="integration-health">
+        <span class="integration-logo" style="background:${escapeAttr(integration.color || "#53657e")}">${escapeHtml(integration.initials || integration.name.slice(0, 2))}</span>
+        <span class="integration-info">
+          <strong>${escapeHtml(integration.name)}</strong>
+          <span>${escapeHtml(integration.category)} · Synced ${relativeTime(integration.lastSync)}</span>
+        </span>
+        <span class="status-dot ${statusClass}" title="${escapeAttr(statusText)}"></span>
+      </div>
+    `;
+  }).join("");
+}
+
+function renderRecentActivity() {
+  const container = document.getElementById("recentActivity");
+  if (!state.activities.length) {
+    container.innerHTML = `
+      <div class="empty-state" style="min-height:200px">
+        <div>
+          <div class="empty-state-icon">${ICONS.spark}</div>
+          <h3>No activity yet</h3>
+          <p>Import records or add a job to see automation activity.</p>
+        </div>
+      </div>
+    `;
+    return;
+  }
+  const iconByType = {
+    match: "link",
+    sync: "sync",
+    alert: "warning",
+    resolve: "check",
+    add: "briefcase"
+  };
+  container.innerHTML = state.activities.slice(0, 5).map(activity => `
+    <div class="activity-item">
+      <span class="activity-symbol ${escapeAttr(activity.type)}">${ICONS[iconByType[activity.type] || "spark"]}</span>
+      <span class="activity-content">
+        <p>${activity.text}</p>
+        <span class="activity-meta">${relativeTime(activity.time)}</span>
+      </span>
+    </div>
+  `).join("");
+}
+
+function getFilteredJobs() {
+  const searchTerm = normalizeSearch(document.getElementById("jobSearch").value);
+  const status = document.getElementById("jobStatusFilter").value;
+  const payment = document.getElementById("jobPaymentFilter").value;
+  const match = document.getElementById("jobMatchFilter").value;
+
+  return state.jobs
+    .filter(job => {
+      const haystack = normalizeSearch([
+        job.title,
+        job.customer,
+        job.address,
+        job.technician,
+        job.id,
+        job.fieldServiceId,
+        job.invoiceNumber,
+        job.crmId,
+        job.accountingId
+      ].join(" "));
+      const searchMatch = !searchTerm || haystack.includes(searchTerm);
+      const statusMatch = status === "all" || job.status === status;
+      const paymentMatch = payment === "all" || job.paymentStatus === payment;
+      const matchMatch = match === "all" || job.matchQuality === match;
+      return searchMatch && statusMatch && paymentMatch && matchMatch;
+    })
+    .sort((a, b) => new Date(b.date) - new Date(a.date) || new Date(b.updatedAt) - new Date(a.updatedAt));
+}
+
+function renderJobsTable() {
+  const filteredJobs = getFilteredJobs();
+  const totalPages = Math.max(1, Math.ceil(filteredJobs.length / jobsPageSize));
+  jobsPage = Math.min(jobsPage, totalPages);
+  const startIndex = (jobsPage - 1) * jobsPageSize;
+  const pageJobs = filteredJobs.slice(startIndex, startIndex + jobsPageSize);
+  const tbody = document.getElementById("jobsTableBody");
+  const empty = document.getElementById("jobsTableEmpty");
+  const footer = document.getElementById("jobsTableFooter");
+  const count = document.getElementById("jobFilterCount");
+
+  count.textContent = `${filteredJobs.length} of ${state.jobs.length} jobs`;
+  tbody.innerHTML = "";
+  empty.innerHTML = "";
+  footer.innerHTML = "";
+
+  if (!pageJobs.length) {
+    tbody.innerHTML = "";
+    const isFiltered = Boolean(
+      document.getElementById("jobSearch").value ||
+      document.getElementById("jobStatusFilter").value !== "all" ||
+      document.getElementById("jobPaymentFilter").value !== "all" ||
+      document.getElementById("jobMatchFilter").value !== "all"
+    );
+    empty.innerHTML = `
+      <div class="empty-state">
+        <div>
+          <div class="empty-state-icon">${ICONS[isFiltered ? "inbox" : "briefcase"]}</div>
+          <h3>${isFiltered ? "No jobs match these filters" : "No unified jobs yet"}</h3>
+          <p>${isFiltered ? "Try clearing one or more filters to see more records." : "Add a completed job manually or connect a system to import records."}</p>
+          ${isFiltered
+            ? '<button class="btn btn-secondary" id="clearJobFiltersButton">Clear filters</button>'
+            : '<button class="btn btn-primary" data-open-job-modal>Add your first job</button>'}
+        </div>
+      </div>
+    `;
+    footer.hidden = true;
+    return;
+  }
+
+  footer.hidden = false;
+  tbody.innerHTML = pageJobs.map(job => `
+    <tr>
+      <td class="job-cell">
+        <div class="job-primary">${escapeHtml(job.title)}</div>
+        <div class="job-secondary">${escapeHtml(job.id.toUpperCase())} · ${escapeHtml(job.fieldServiceId || "No field ID")}</div>
+      </td>
+      <td class="customer-cell">
+        <strong>${escapeHtml(job.customer)}</strong>
+        <span title="${escapeAttr(job.address)}">${escapeHtml(job.address.split(",").slice(0, 2).join(","))}</span>
+      </td>
+      <td>${escapeHtml(longDate(job.date))}</td>
+      <td>${escapeHtml(job.technician)}</td>
+      <td class="money">${escapeHtml(formatCurrency(job.amount))}</td>
+      <td>${statusPill(job.paymentStatus)}</td>
+      <td><span class="match-pill ${escapeAttr(job.matchQuality)}">${escapeHtml(titleCase(job.matchQuality))}</span></td>
+      <td>${statusPill(job.status)}</td>
+      <td>
+        <div class="row-actions">
+          <button class="icon-button" data-view-job="${escapeAttr(job.id)}" aria-label="View ${escapeAttr(job.title)}" title="View job">${ICONS.eye}</button>
+          <button class="icon-button" data-edit-job="${escapeAttr(job.id)}" aria-label="Edit ${escapeAttr(job.title)}" title="Edit job">${ICONS.edit}</button>
+          <button class="icon-button danger" data-delete-job="${escapeAttr(job.id)}" aria-label="Delete ${escapeAttr(job.title)}" title="Delete job">${ICONS.trash}</button>
+        </div>
+      </td>
+    </tr>
+  `).join("");
+
+  const firstResult = filteredJobs.length ? startIndex + 1 : 0;
+  const lastResult = Math.min(startIndex + jobsPageSize, filteredJobs.length);
+  footer.innerHTML = `
+    <span>Showing ${firstResult}–${lastResult} of ${filteredJobs.length}</span>
+    <div class="pagination" aria-label="Jobs pagination">
+      <button class="page-button" data-job-page="${Math.max(1, jobsPage - 1)}" ${jobsPage === 1 ? "disabled" : ""}>Prev</button>
+      ${Array.from({ length: totalPages }, (_, index) => index + 1).slice(0, 5).map(pageNumber => `
+        <button class="page-button ${pageNumber === jobsPage ? "active" : ""}" data-job-page="${pageNumber}">${pageNumber}</button>
+      `).join("")}
+      <button class="page-button" data-job-page="${Math.min(totalPages, jobsPage + 1)}" ${jobsPage === totalPages ? "disabled" : ""}>Next</button>
+    </div>
+  `;
+}
+
+function getExceptionsForView() {
+  const priority = document.getElementById("exceptionPriorityFilter").value;
+  return state.exceptions
+    .filter(item => item.status === currentExceptionStatus && (priority === "all" || item.priority === priority))
+    .sort((a, b) => {
+      if (currentExceptionStatus === "open") {
+        const rank = { high: 0, medium: 1, low: 2 };
+        return rank[a.priority] - rank[b.priority] || new Date(b.createdAt) - new Date(a.createdAt);
+      }
+      return new Date(b.resolvedAt || b.createdAt) - new Date(a.resolvedAt || a.createdAt);
+    });
+}
+
+function renderExceptions() {
+  const exceptions = getExceptionsForView();
+  const queue = document.getElementById("exceptionQueue");
+  const count = document.getElementById("exceptionCount");
+  count.textContent = `${exceptions.length} ${exceptions.length === 1 ? "item" : "items"}`;
+
+  if (!exceptions.length) {
+    queue.innerHTML = `
+      <div class="empty-state">
+        <div>
+          <div class="empty-state-icon">${ICONS.check}</div>
+          <h3>No ${currentExceptionStatus} exceptions</h3>
+          <p>${currentExceptionStatus === "open" ? "There are no records in this queue with the selected priority." : "Items moved to this status will appear here."}</p>
+        </div>
+      </div>
+    `;
+    document.getElementById("exceptionInspector").innerHTML = renderEmptyInspector();
+    currentExceptionId = null;
+    return;
+  }
+
+  if (!exceptions.some(item => item.id === currentExceptionId)) {
+    currentExceptionId = exceptions[0].id;
+  }
+
+  queue.innerHTML = exceptions.map(item => {
+    const job = state.jobs.find(candidate => candidate.id === item.jobId);
+    return `
+      <button class="queue-item ${item.id === currentExceptionId ? "selected" : ""}" data-select-exception="${escapeAttr(item.id)}">
+        <span class="queue-priority ${escapeAttr(item.priority)}"></span>
+        <span class="queue-main">
+          <span class="queue-top">
+            <span class="queue-title">${escapeHtml(item.title)}</span>
+            <span class="priority-pill ${escapeAttr(item.priority)}">${escapeHtml(titleCase(item.priority))}</span>
+            <span class="queue-id">${escapeHtml(item.id.toUpperCase())}</span>
+          </span>
+          <span class="queue-description">${escapeHtml(item.description)}</span>
+          <span class="queue-meta">
+            <span>${ICONS.inbox}${escapeHtml(item.type)}</span>
+            <span>${ICONS.calendar}${escapeHtml(job ? longDate(job.date) : "Date unavailable")}</span>
+            <span>${ICONS.user}${escapeHtml(job ? job.customer : "Unknown customer")}</span>
+          </span>
+        </span>
+        <span class="queue-amount">${job ? formatCurrency(job.amount, true) : "—"}</span>
+      </button>
+    `;
+  }).join("");
+
+  renderExceptionInspector();
+}
+
+function renderEmptyInspector() {
+  return `
+    <div class="empty-state" style="min-height:480px">
+      <div>
+        <div class="empty-state-icon">${ICONS.arrow}</div>
+        <h3>Select an exception</h3>
+        <p>Choose a record from the queue to compare source values and apply a recommended correction.</p>
+      </div>
+    </div>
+  `;
+}
+
+function renderExceptionInspector() {
+  const item = state.exceptions.find(exception => exception.id === currentExceptionId);
+  const inspector = document.getElementById("exceptionInspector");
+  if (!item) {
+    inspector.innerHTML = renderEmptyInspector();
+    return;
+  }
+  const job = state.jobs.find(candidate => candidate.id === item.jobId);
+  const isOpen = item.status === "open";
+  inspector.innerHTML = `
+    <div class="inspector-header">
+      <div class="inspector-header-top">
+        <span class="priority-pill ${escapeAttr(item.priority)}">${escapeHtml(titleCase(item.priority))} priority</span>
+        <span class="status-pill ${isOpen ? "attention" : "matched"}">${escapeHtml(titleCase(item.status))}</span>
+      </div>
+      <h3>${escapeHtml(item.title)}</h3>
+      <p>${escapeHtml(item.type)} · ${escapeHtml(item.id.toUpperCase())}</p>
+    </div>
+    <div class="inspector-section">
+      <h4>Source comparison</h4>
+      <div class="comparison-list">
+        ${item.fields.map(field => `
+          <div class="comparison-row">
+            <span class="label">${escapeHtml(field.label)}</span>
+            <span class="comparison-value ${field.conflict ? "conflict" : ""}">${escapeHtml(field.left)}</span>
+            <span class="compare-symbol">↔</span>
+            <span class="comparison-value ${field.conflict ? "conflict" : ""}">${escapeHtml(field.right)}</span>
+          </div>
+        `).join("")}
+      </div>
+    </div>
+    <div class="inspector-section">
+      <h4>Recommended correction</h4>
+      <p class="inspector-note">${escapeHtml(item.recommendation)}</p>
+    </div>
+    ${item.resolvedAt ? `
+      <div class="inspector-section">
+        <h4>Resolution</h4>
+        <p class="inspector-note" style="color:var(--green-700);background:var(--green-100)">${escapeHtml(item.resolutionNote || "Resolved with recommended correction.")}</p>
+        <div class="field-hint" style="margin-top:7px">Resolved ${escapeHtml(relativeTime(item.resolvedAt))}</div>
+      </div>
+    ` : ""}
+    ${job ? `
+      <div class="inspector-section">
+        <h4>Linked job</h4>
+        <div class="comparison-row" style="grid-template-columns:72px 1fr">
+          <span class="label">Customer</span><span class="comparison-value">${escapeHtml(job.customer)}</span>
+          <span class="label">Amount</span><span class="comparison-value">${escapeHtml(formatCurrency(job.amount))}</span>
+          <span class="label">Invoice</span><span class="comparison-value">${escapeHtml(job.invoiceNumber || "Missing")}</span>
+        </div>
+      </div>
+    ` : ""}
+    <div class="inspector-actions">
+      ${isOpen ? `
+        <button class="btn btn-primary" data-resolve-exception="${escapeAttr(item.id)}">${ICONS.check} Apply recommended fix</button>
+        <button class="btn btn-secondary" data-ignore-exception="${escapeAttr(item.id)}">Ignore</button>
+        ${job ? `<button class="btn btn-secondary" data-view-job="${escapeAttr(job.id)}">${ICONS.eye} View job</button>` : ""}
+      ` : `
+        <button class="btn btn-secondary" data-reopen-exception="${escapeAttr(item.id)}">Reopen exception</button>
+        ${job ? `<button class="btn btn-secondary" data-view-job="${escapeAttr(job.id)}">${ICONS.eye} View job</button>` : ""}
+      `}
+    </div>
+  `;
+}
+
+function renderIntegrations() {
+  const grid = document.getElementById("integrationGrid");
+  const connected = state.integrations.filter(item => item.status === "connected" || item.status === "syncing").length;
+  document.getElementById("connectedSummary").textContent = `${connected} active of ${state.integrations.length} configured`;
+
+  if (!state.integrations.length) {
+    grid.innerHTML = `
+      <div class="empty-state" style="grid-column:1/-1;min-height:330px">
+        <div>
+          <div class="empty-state-icon">${ICONS.link}</div>
+          <h3>Connect your first system</h3>
+          <p>Postback reads completed jobs, invoices, CRM opportunities, and payment status to build unified records.</p>
+          <button class="btn btn-primary" id="emptyConnectButton">Browse providers</button>
+        </div>
+      </div>
+    `;
+  } else {
+    grid.innerHTML = state.integrations.map(integration => {
+      const syncProgress = integration.records ? Math.round((integration.syncedRecords / integration.records) * 100) : 0;
+      return `
+        <article class="integration-card">
+          <div class="integration-card-head">
+            <span class="integration-card-logo" style="background:${escapeAttr(integration.color)}">${escapeHtml(integration.initials)}</span>
+            <div>
+              <h3>${escapeHtml(integration.name)}</h3>
+              <span class="integration-card-subtitle">${escapeHtml(integration.category)} · ${escapeHtml(integration.account)}</span>
+            </div>
+            ${statusPill(integration.status)}
+          </div>
+          <div class="integration-stats">
+            <div class="integration-stat">
+              <strong>${integration.records.toLocaleString()}</strong>
+              <span>Source records</span>
+            </div>
+            <div class="integration-stat">
+              <strong>${syncProgress}%</strong>
+              <span>Synced</span>
+            </div>
+            <div class="integration-stat">
+              <strong>${integration.errors}</strong>
+              <span>Errors</span>
+            </div>
+          </div>
+          <div class="integration-card-footer">
+            <span class="last-sync">Last sync ${relativeTime(integration.lastSync)}</span>
+            <button class="btn btn-secondary btn-sm" data-manage-integration="${escapeAttr(integration.id)}">
+              ${integration.status === "syncing" ? "Syncing" : "Sync now"}
+            </button>
+            <button class="icon-button danger" data-disconnect-integration="${escapeAttr(integration.id)}" aria-label="Disconnect ${escapeAttr(integration.name)}" title="Disconnect">${ICONS.trash}</button>
+          </div>
+        </article>
+      `;
+    }).join("");
+  }
+
+  document.getElementById("emailAlertsToggle").checked = Boolean(state.settings.emailAlerts);
+  document.getElementById("slackAlertsToggle").checked = Boolean(state.settings.slackAlerts);
+}
+
+function renderReports() {
+  const range = Number(document.getElementById("reportRange").value || 30);
+  const cutoff = new Date();
+  cutoff.setHours(0, 0, 0, 0);
+  cutoff.setDate(cutoff.getDate() - range);
+  const jobs = state.jobs.filter(job => new Date(`${job.date}T12:00:00`) >= cutoff);
+  const exceptions = state.exceptions.filter(item => new Date(item.createdAt) >= cutoff);
+  const totalValue = jobs.reduce((sum, job) => sum + Number(job.amount || 0), 0);
+  const matched = jobs.filter(job => job.status === "matched");
+  const outstanding = jobs.filter(job => ["outstanding", "overdue"].includes(job.paymentStatus));
+  const missingInvoices = jobs.filter(job => !job.invoiceNumber);
+  const unmatched = jobs.filter(job => ["unmatched", "needs-review", "incomplete"].includes(job.status));
+  const paid = jobs.filter(job => job.paymentStatus === "paid");
+  const openExceptions = exceptions.filter(item => item.status === "open");
+  const resolvedExceptions = exceptions.filter(item => item.status === "resolved");
+
+  document.getElementById("reportPeriodLabel").textContent = `${longDate(isoDate(range))} – ${longDate(isoDate(0))}`;
+
+  document.getElementById("reportKpis").innerHTML = `
+    <div class="report-kpi">
+      <span>Total reconciled value</span>
+      <strong>${formatCurrencyShort(totalValue)}</strong>
+      <small>${formatCurrency(totalValue - outstanding.reduce((sum, job) => sum + Number(job.amount || 0), 0))} collected</small>
+    </div>
+    <div class="report-kpi">
+      <span>Outstanding balance</span>
+      <strong>${formatCurrencyShort(outstanding.reduce((sum, job) => sum + Number(job.amount || 0), 0))}</strong>
+      <small style="color:var(--amber-700)">${outstanding.length} open customer balances</small>
+    </div>
+    <div class="report-kpi">
+      <span>Estimated time saved</span>
+      <strong>${(jobs.length * .42 + resolvedExceptions.length * .35).toFixed(1)} hrs</strong>
+      <small>Based on ${jobs.length} processed jobs</small>
+    </div>
+  `;
+
+  const readinessCategories = [
+    { label: "Fully matched", value: matched.length, total: jobs.length || 1, className: "green" },
+    { label: "Payment follow-up", value: outstanding.length, total: jobs.length || 1, className: "amber" },
+    { label: "Missing invoices", value: missingInvoices.length, total: jobs.length || 1, className: "" },
+    { label: "Unresolved conflicts", value: openExceptions.length, total: Math.max(jobs.length, 1), className: "amber" }
+  ];
+  document.getElementById("recordReadiness").innerHTML = readinessCategories.map(category => {
+    const percentage = Math.min(100, Math.round((category.value / category.total) * 100));
+    return `
+      <div class="report-breakdown-row">
+        <div class="report-breakdown-top">
+          <span>${escapeHtml(category.label)}</span>
+          <strong>${category.value} · ${percentage}%</strong>
+        </div>
+        <div class="progress-track"><div class="progress-fill ${category.className}" style="width:${percentage}%"></div></div>
+      </div>
+    `;
+  }).join("");
+
+  const serviceCount = jobs.filter(job => !state.integrations.some(integration => integration.category === "Field service")).length;
+  const totalHours = jobs.length * .42 + resolvedExceptions.length * .35;
+  const avgResolution = resolvedExceptions.length ? 8.4 : jobs.length ? 12.1 : 0;
+  const reportRows = [
+    { category: "Field-service jobs", records: jobs.length, value: totalValue, rate: jobs.length ? 100 : 0, status: jobs.length ? "Ready" : "No data" },
+    { category: "CRM opportunities", records: jobs.filter(job => job.crmId).length, value: jobs.filter(job => job.crmId).reduce((sum, job) => sum + Number(job.amount || 0), 0), rate: jobs.length ? Math.round(jobs.filter(job => job.crmId).length / jobs.length * 100) : 0, status: "Ready" },
+    { category: "Accounting invoices", records: jobs.filter(job => job.accountingId).length, value: jobs.filter(job => job.accountingId).reduce((sum, job) => sum + Number(job.amount || 0), 0), rate: jobs.length ? Math.round(jobs.filter(job => job.accountingId).length / jobs.length * 100) : 0, status: missingInvoices.length ? "Attention" : "Ready" },
+    { category: "Payment transactions", records: paid.length + outstanding.length, value: paid.reduce((sum, job) => sum + Number(job.amount || 0), 0), rate: jobs.length ? Math.round((paid.length + outstanding.length) / jobs.length * 100) : 0, status: outstanding.length ? "Attention" : "Ready" },
+    { category: "Exception queue", records: openExceptions.length, value: unmatched.reduce((sum, job) => sum + Number(job.amount || 0), 0), rate: jobs.length ? Math.round(matched.length / jobs.length * 100) : 0, status: openExceptions.length ? "Attention" : "Complete" }
+  ];
+
+  document.getElementById("reportTableBody").innerHTML = reportRows.map(row => `
+    <tr>
+      <td><strong style="color:var(--navy-900)">${escapeHtml(row.category)}</strong></td>
+      <td>${row.records.toLocaleString()}</td>
+      <td class="money">${escapeHtml(formatCurrency(row.value))}</td>
+      <td>${row.records ? escapeHtml(`${avgResolution} min`) : "—"}</td>
+      <td>${row.rate}%</td>
+      <td><span class="status-pill ${row.status === "Ready" || row.status === "Complete" ? "matched" : row.status === "Attention" ? "attention" : "incomplete"}">${escapeHtml(row.status)}</span></td>
+    </tr>
+  `).join("");
+}
+
+function populateSettingsForms() {
+  const companyForm = document.getElementById("companySettingsForm");
+  companyForm.elements.companyName.value = state.company.name;
+  companyForm.elements.timezone.value = state.company.timezone;
+  companyForm.elements.operationsEmail.value = state.company.operationsEmail;
+
+  const matchingForm = document.getElementById("matchingSettingsForm");
+  matchingForm.elements.autoMatchThreshold.value = String(state.settings.autoMatchThreshold);
+  matchingForm.elements.matchFields.value = state.settings.matchFields;
+  matchingForm.elements.dateTolerance.value = String(state.settings.dateTolerance);
+  matchingForm.elements.addressMatching.checked = Boolean(state.settings.addressMatching);
+
+  const alertForm = document.getElementById("alertSettingsForm");
+  alertForm.elements.notifyHigh.checked = Boolean(state.settings.notifyHigh);
+  alertForm.elements.notifyMissingInvoices.checked = Boolean(state.settings.notifyMissingInvoices);
+  alertForm.elements.notifyDuplicates.checked = Boolean(state.settings.notifyDuplicates);
+  alertForm.elements.notifyWeekly.checked = Boolean(state.settings.notifyWeekly);
+  alertForm.elements.alertDigestTime.value = state.settings.alertDigestTime || "16:00";
+  alertForm.elements.weeklyDay.value = state.settings.weeklyDay || "friday";
+
+  const dataForm = document.getElementById("dataSettingsForm");
+  dataForm.elements.retentionMonths.value = String(state.settings.retentionMonths);
+}
+
+function openModal(modalId, trigger = null) {
+  const modal = document.getElementById(modalId);
+  if (!modal) return;
+  appModalReturnFocus = trigger || document.activeElement;
+  modal.classList.remove("hidden");
+  document.body.style.overflow = "hidden";
+  const focusable = modal.querySelector("input:not([type=hidden]):not(:disabled), select:not(:disabled), textarea:not(:disabled), button:not(:disabled)");
+  setTimeout(() => focusable?.focus(), 20);
+}
+
+function closeModal(modalId) {
+  const modal = document.getElementById(modalId);
+  if (!modal) return;
+  modal.classList.add("hidden");
+  document.body.style.overflow = "";
+  if (appModalReturnFocus && document.contains(appModalReturnFocus)) appModalReturnFocus.focus();
+}
+
+function closeAllModals() {
+  document.querySelectorAll(".modal-backdrop").forEach(modal => modal.classList.add("hidden"));
+  document.body.style.overflow = "";
+}
+
+function showToast(title, message, type = "info") {
+  const toast = document.createElement("div");
+  toast.className = `toast ${type}`;
+  toast.setAttribute("role", type === "error" ? "alert" : "status");
+  const icon = type === "success" ? "check" : type === "error" ? "warning" : type === "warning" ? "warning" : "info";
+  toast.innerHTML = `
+    <span class="toast-icon">${ICONS[icon]}</span>
+    <span class="toast-body">
+      <strong>${escapeHtml(title)}</strong>
+      <span>${escapeHtml(message)}</span>
+    </span>
+    <button class="toast-close" aria-label="Dismiss notification">×</button>
+  `;
+  const removeToast = () => {
+    toast.classList.add("removing");
+    setTimeout(() => toast.remove(), 210);
+  };
+  toast.querySelector(".toast-close").addEventListener("click", removeToast);
+  document.getElementById("toastRegion").appendChild(toast);
+  setTimeout(removeToast, 5200);
+}
+
+function addActivity(type, text) {
+  state.activities.unshift({
+    id: `act-${Date.now()}-${Math.random().toString(16).slice(2)}`,
+    type,
+    text,
+    time: new Date().toISOString()
+  });
+  state.activities = state.activities.slice(0, 30);
+}
+
+function addAuditLog(action, details) {
+  state.auditLog.unshift({
+    id: `audit-${Date.now()}`,
+    action,
+    details,
+    timestamp: new Date().toISOString()
+  });
+  state.auditLog = state.auditLog.slice(0, 100);
+}
+
+function validateForm(form, fields) {
+  let valid = true;
+  fields.forEach(fieldName => {
+    const field = form.elements[fieldName];
+    const errorElement = form.querySelector(`[data-error-for="${fieldName}"]`);
+    let message = "";
+    const value = field?.value?.trim() || "";
+    if (field?.required && !value) {
+      message = "This field is required.";
+    } else if (fieldName === "operationsEmail" && value && !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(value)) {
+      message = "Enter a valid email address.";
+    } else if (fieldName === "amount" && value && (!Number.isFinite(Number(value)) || Number(value) <= 0)) {
+      message = "Enter an amount greater than zero.";
+    } else if (fieldName === "completionDate" && value && new Date(`${value}T12:00:00`) > new Date()) {
+      message = "Completion date cannot be in the future.";
+    }
+    field?.classList?.toggle("invalid", Boolean(message));
+    field?.setAttribute?.("aria-invalid", message ? "true" : "false");
+    if (errorElement) errorElement.textContent = message;
+    if (message) valid = false;
+  });
+  if (!valid) {
+    const firstInvalid = form.querySelector(".invalid");
+    firstInvalid?.focus();
+  }
+  return valid;
+}
+
+function clearFormValidation(form) {
+  form.querySelectorAll(".invalid").forEach(field => {
+    field.classList.remove("invalid");
+    field.removeAttribute("aria-invalid");
+  });
+  form.querySelectorAll(".error-text").forEach(error => error.textContent = "");
+}
+
+function addActivityIconForJob(job) {
+  return `<strong>${escapeHtml(job.title)}</strong>`;
+}
+
+function openJobForm(jobId = null, trigger = null) {
+  const form = document.getElementById("jobForm");
+  form.reset();
+  clearFormValidation(form);
+  document.getElementById("jobModalTitle").textContent = jobId ? "Edit unified job" : "Add completed job";
+  document.getElementById("jobSubmitButton").textContent = jobId ? "Save changes" : "Save job";
+  document.getElementById("editingJobId").value = jobId || "";
+
+  if (!jobId) {
+    form.elements.completionDate.value = isoDate(0);
+    form.elements.technician.value = "";
+  } else {
+    const job = state.jobs.find(item => item.id === jobId);
+    if (!job) {
+      showToast("Job not found", "This unified job may have already been deleted.", "error");
+      return;
+    }
+    Object.entries(job).forEach(([key, value]) => {
+      if (form.elements[key] && key !== "editingJobId") form.elements[key].value = value;
+    });
+  }
+  openModal("jobModal", trigger);
+}
+
+function submitJobForm(event) {
+  event.preventDefault();
+  const form = event.currentTarget;
+  if (!validateForm(form, ["jobTitle", "customerName", "serviceAddress", "completionDate", "technician", "amount", "paymentStatus", "completionNotes"])) return;
+
+  const data = new FormData(form);
+  const editingJobId = data.get("editingJobId");
+  const existing = editingJobId ? state.jobs.find(job => job.id === editingJobId) : null;
+  if (editingJobId && !existing) {
+    showToast("Unable to save", "The job no longer exists. Refresh and try again.", "error");
+    return;
+  }
+
+  const job = {
+    id: existing?.id || `job-${Date.now()}`,
+    title: String(data.get("jobTitle")).trim(),
+    customer: String(data.get("customerName")).trim(),
+    address: String(data.get("serviceAddress")).trim(),
+    date: String(data.get("completionDate")),
+    technician: String(data.get("technician")),
+    amount: Math.round(Number(data.get("amount")) * 100) / 100,
+    paymentStatus: String(data.get("paymentStatus")),
+    status: String(data.get("reconciliationStatus")),
+    matchQuality: String(data.get("matchQuality")),
+    notes: String(data.get("completionNotes")).trim(),
+    fieldServiceId: String(data.get("fieldServiceId") || "").trim(),
+    invoiceNumber: String(data.get("invoiceNumber") || "").trim(),
+    crmId: String(data.get("crmId") || "").trim(),
+    accountingId: String(data.get("accountingId") || "").trim(),
+    createdAt: existing?.createdAt || new Date().toISOString(),
+    updatedAt: new Date().toISOString()
+  };
+
+  if (existing) {
+    Object.assign(existing, job);
+    addActivity("match", `Updated unified record for ${addActivityIconForJob(job)}`);
+    addAuditLog("job.updated", `${job.id} — ${job.title}`);
+  } else {
+    state.jobs.unshift(job);
+    addActivity("add", `Created unified record for ${addActivityIconForJob(job)}`);
+    addAuditLog("job.created", `${job.id} — ${job.title}`);
+  }
+
+  saveState();
+  closeModal("jobModal");
+  showToast(existing ? "Job updated" : "Job created", `${job.title} is now in your unified workspace.`, "success");
+  renderCurrentView();
+}
+
+function requestDeleteJob(jobId, trigger = null) {
+  const job = state.jobs.find(item => item.id === jobId);
+  if (!job) return;
+  document.getElementById("deletingJobId").value = jobId;
+  document.getElementById("deleteJobName").textContent = job.title;
+  document.getElementById("deleteJobMessage").textContent = `${job.customer} · ${formatCurrency(job.amount)} · This action cannot be undone.`;
+  openModal("deleteModal", trigger);
+}
+
+function confirmDeleteJob() {
+  const jobId = document.getElementById("deletingJobId").value;
+  const job = state.jobs.find(item => item.id === jobId);
+  if (!job) return;
+  state.jobs = state.jobs.filter(item => item.id !== jobId);
+  state.exceptions = state.exceptions.filter(item => item.jobId !== jobId);
+  addActivity("resolve", `Deleted unified record for ${addActivityIconForJob(job)}`);
+  addAuditLog("job.deleted", `${job.id} — ${job.title}`);
+  saveState();
+  closeModal("deleteModal");
+  showToast("Job deleted", `${job.title} was removed from this workspace.`, "success");
+  renderCurrentView();
+}
+
+function openJobDetails(jobId, trigger = null) {
+  const job = state.jobs.find(item => item.id === jobId);
+  if (!job) {
+    showToast("Job not found", "The selected record no longer exists.", "error");
+    return;
+  }
+  const sourceRows = [
+    ["Field service", job.fieldServiceId],
+    ["Invoice", job.invoiceNumber],
+    ["CRM", job.crmId],
+    ["Accounting", job.accountingId]
+  ];
+  const modal = document.createElement("div");
+  modal.className = "modal-backdrop";
+  modal.id = "jobDetailsModal";
+  modal.setAttribute("role", "dialog");
+  modal.setAttribute("aria-modal", "true");
+  modal.setAttribute("aria-labelledby", "jobDetailsTitle");
+  modal.innerHTML = `
+    <div class="modal">
+      <div class="modal-header">
+        <div class="modal-header-copy">
+          <h2 id="jobDetailsTitle">${escapeHtml(job.title)}</h2>
+          <p>${escapeHtml(job.customer)} · ${escapeHtml(job.id.toUpperCase())}</p>
+        </div>
+        <button class="modal-close" data-close-job-details aria-label="Close job details">${ICONS.arrow.replace("M5 12h14", "m6 6 12 12 M18 6 6 18")}</button>
+      </div>
+      <div class="modal-body">
+        <div class="form-grid">
+          <div class="field">
+            <span class="field-label">Reconciliation status</span>
+            <div>${statusPill(job.status)}</div>
+          </div>
+          <div class="field">
+            <span class="field-label">Payment status</span>
+            <div>${statusPill(job.paymentStatus)}</div>
+          </div>
+          <div class="field">
+            <span class="field-label">Completed</span>
+            <div>${escapeHtml(longDate(job.date))}</div>
+          </div>
+          <div class="field">
+            <span class="field-label">Technician</span>
+            <div>${escapeHtml(job.technician)}</div>
+          </div>
+          <div class="field">
+            <span class="field-label">Invoice amount</span>
+            <strong>${escapeHtml(formatCurrency(job.amount))}</strong>
+          </div>
+          <div class="field">
+            <span class="field-label">Match quality</span>
+            <div><span class="match-pill ${escapeAttr(job.matchQuality)}">${escapeHtml(titleCase(job.matchQuality))}</span></div>
+          </div>
+          <div class="field full">
+            <span class="field-label">Service address</span>
+            <div>${escapeHtml(job.address)}</div>
+          </div>
+          <div class="field full">
+            <span class="field-label">Completion notes</span>
+            <p style="margin:0;color:var(--slate-600);font-size:10px;line-height:1.55">${escapeHtml(job.notes)}</p>
+          </div>
+          <div class="form-section-title">Connected source links</div>
+          ${sourceRows.map(([label, value]) => `
+            <div class="field">
+              <span class="field-label">${escapeHtml(label)}</span>
+              <div class="comparison-value">${escapeHtml(value || "Not linked")}</div>
+            </div>
+          `).join("")}
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button class="btn btn-secondary" type="button" data-close-job-details>Close</button>
+        <button class="btn btn-primary" type="button" data-edit-from-details="${escapeAttr(job.id)}">${ICONS.edit} Edit job</button>
+      </div>
+    </div>
+  `;
+  document.body.appendChild(modal);
+  document.body.style.overflow = "hidden";
+  appModalReturnFocus = trigger || document.activeElement;
+  modal.querySelector("[data-close-job-details]").focus();
+  modal.addEventListener("click", event => {
+    if (event.target === modal || event.target.closest("[data-close-job-details]")) {
+      modal.remove();
+      document.body.style.overflow = "";
+      if (appModalReturnFocus && document.contains(appModalReturnFocus)) appModalReturnFocus.focus();
+    }
+    const editButton = event.target.closest("[data-edit-from-details]");
+    if (editButton) {
+      modal.remove();
+      document.body.style.overflow = "";
+      openJobForm(editButton.dataset.editFromDetails, trigger);
+    }
+  });
+}
+
+function openResolveModal(exceptionId, trigger = null) {
+  const item = state.exceptions.find(exception => exception.id === exceptionId);
+  if (!item) return;
+  const form = document.getElementById("resolveForm");
+  form.reset();
+  clearFormValidation(form);
+  document.getElementById("resolvingExceptionId").value = exceptionId;
+  document.getElementById("resolutionAction").value = item.recommendationAction || "";
+  document.getElementById("resolutionNote").value = item.resolutionNote || "";
+  document.getElementById("resolutionStatus").value = item.jobId ? "matched" : "incomplete";
+  document.getElementById("resolveModalDescription").textContent = item.recommendation;
+  openModal("resolveModal", trigger);
+}
+
+function applyResolutionToJob(item, action, resolutionStatus) {
+  const job = state.jobs.find(candidate => candidate.id === item.jobId);
+  if (!job) return;
+  job.status = resolutionStatus;
+  job.updatedAt = new Date().toISOString();
+  if (action === "create-invoice") {
+    job.invoiceNumber = "";
+    job.accountingId = "";
+  }
+  if (action === "use-crm") {
+    job.crmId = job.crmId || `OPP-MAN-${String(Date.now()).slice(-5)}`;
+  }
+  if (action === "remove-duplicate") {
+    job.matchQuality = "manual";
+    job.notes += " Duplicate candidate reviewed and resolved by operations.";
+  }
+  if (action === "accept-right") {
+    job.matchQuality = "manual";
+  }
+}
+
+function submitResolutionForm(event) {
+  event.preventDefault();
+  const form = event.currentTarget;
+  if (!validateForm(form, ["resolutionAction"])) return;
+  const exceptionId = document.getElementById("resolvingExceptionId").value;
+  const item = state.exceptions.find(exception => exception.id === exceptionId);
+  if (!item) {
+    showToast("Exception not found", "This item may have already been removed.", "error");
+    closeModal("resolveModal");
+    return;
+  }
+  const action = form.elements.resolutionAction.value;
+  const note = form.elements.resolutionNote.value.trim();
+  const resolutionStatus = form.elements.resolutionStatus.value;
+  item.status = action === "ignore" ? "ignored" : "resolved";
+  item.resolvedAt = action === "ignore" ? null : new Date().toISOString();
+  item.resolutionAction = action;
+  item.resolutionNote = note || item.recommendation;
+  applyResolutionToJob(item, action, resolutionStatus);
+  addActivity("resolve", `Resolved exception for ${escapeHtml(item.title.replace(/<[^>]*>/g, ""))}`);
+  addAuditLog("exception.resolved", `${item.id} — ${action}`);
+  saveState();
+  closeModal("resolveModal");
+  showToast("Exception resolved", item.resolutionNote, "success");
+  renderCurrentView();
+}
+
+function ignoreException(exceptionId) {
+  const item = state.exceptions.find(exception => exception.id === exceptionId);
+  if (!item) return;
+  item.status = "ignored";
+  item.resolutionNote = "Ignored from the exception queue.";
+  addAuditLog("exception.ignored", item.id);
+  saveState();
+  showToast("Exception ignored", item.title, "warning");
+  renderCurrentView();
+}
+
+function reopenException(exceptionId) {
+  const item = state.exceptions.find(exception => exception.id === exceptionId);
+  if (!item) return;
+  item.status = "open";
+  item.resolvedAt = null;
+  item.resolutionNote = "";
+  saveState();
+  showToast("Exception reopened", item.title, "success");
+  renderCurrentView();
+}
+
+function resolveVisibleExceptions() {
+  const visible = getExceptionsForView();
+  if (!visible.length) {
+    showToast("Nothing to resolve", "There are no visible open exceptions.", "warning");
+    return;
+  }
+  let changed = 0;
+  visible.forEach(item => {
+    if (item.status !== "open") return;
+    item.status = "resolved";
+    item.resolvedAt = new Date().toISOString();
+    item.resolutionAction = item.recommendationAction;
+    item.resolutionNote = item.recommendation;
+    applyResolutionToJob(item, item.recommendationAction, "matched");
+    changed += 1;
+  });
+  addAuditLog("exceptions.bulk_resolved", `${changed} visible exceptions`);
+  saveState();
+  showToast("Visible exceptions resolved", `${changed} records were updated using their recommended corrections.`, "success");
+  renderCurrentView();
+}
+
+function openConnectModal(trigger = null) {
+  const form = document.getElementById("connectForm");
+  form.reset();
+  clearFormValidation(form);
+  const available = new Set(state.integrations.map(integration => integration.name));
+  document.querySelectorAll("#providerSelect option").forEach(option => {
+    if (!option.value) return;
+    option.disabled = available.has(option.value);
+  });
+  openModal("connectModal", trigger);
+}
+
+function submitConnectForm(event) {
+  event.preventDefault();
+  const form = event.currentTarget;
+  if (!validateForm(form, ["providerSelect", "accountName"])) return;
+  const provider = form.elements.providerSelect.value;
+  const accountName = form.elements.accountName.value.trim();
+  if (state.integrations.some(integration => integration.name === provider)) {
+    showToast("Already connected", `${provider} is already configured for this workspace.`, "error");
+    return;
+  }
+  const meta = PROVIDER_META[provider] || { category: "Business system", color: "#53657e", initials: provider.slice(0, 2) };
+  state.integrations.push({
+    id: `int-${Date.now()}`,
+    name: provider,
+    category: meta.category,
+    status: "connected",
+    account: accountName,
+    color: meta.color,
+    initials: meta.initials,
+    lastSync: new Date().toISOString(),
+    records: 0,
+    syncedRecords: 0,
+    errors: 0
+  });
+  addActivity("sync", `Connected <strong>${escapeHtml(provider)}</strong> using secure OAuth`);
+  addAuditLog("integration.connected", `${provider} — ${accountName}`);
+  state.lastGlobalSync = new Date().toISOString();
+  saveState();
+  closeModal("connectModal");
+  showToast("System connected", `${provider} is ready to sync.`, "success");
+  renderIntegrations();
+  updateGlobalCounts();
+}
+
+function disconnectIntegration(integrationId) {
+  const integration = state.integrations.find(item => item.id === integrationId);
+  if (!integration) return;
+  const confirmed = window.confirm(`Disconnect ${integration.name}? Cached records will remain in the unified workspace.`);
+  if (!confirmed) return;
+  state.integrations = state.integrations.filter(item => item.id !== integrationId);
+  addAuditLog("integration.disconnected", integration.name);
+  saveState();
+  showToast("System disconnected", `${integration.name} will no longer receive sync requests.`, "warning");
+  renderIntegrations();
+}
+
+function openSyncModal(integrationId, trigger = null) {
+  const integration = state.integrations.find(item => item.id === integrationId);
+  if (!integration) return;
+  syncingIntegrationId = integrationId;
+  document.getElementById("syncIntegrationId").value = integrationId;
+  document.getElementById("notificationModalTitle").textContent = `Sync ${integration.name}`;
+  document.getElementById("notificationDescription").textContent = `Postback will pull updates from ${integration.account}.`;
+  document.getElementById("syncSubmitButton").textContent = "Start sync";
+  document.getElementById("syncForm").reset();
+  document.getElementById("runMatchingToggle").checked = true;
+  openModal("notificationModal", trigger);
+}
+
+function submitSyncForm(event) {
+  event.preventDefault();
+  const integration = state.integrations.find(item => item.id === syncingIntegrationId);
+  if (!integration) {
+    showToast("Integration unavailable", "The selected system is no longer connected.", "error");
+    closeModal("notificationModal");
+    return;
+  }
+  const mode = document.getElementById("syncMode").value;
+  const runMatching = document.getElementById("runMatchingToggle").checked;
+  integration.status = "syncing";
+  integration.syncedRecords = integration.records;
+  integration.errors = 0;
+  integration.lastSync = new Date().toISOString();
+  state.lastGlobalSync = integration.lastSync;
+  addActivity("sync", `<strong>${escapeHtml(integration.name)}</strong> sync started`);
+  saveState();
+  setGlobalSyncState(true);
+  closeModal("notificationModal");
+  renderIntegrations();
+  showToast("Sync started", `${integration.name} is pulling ${mode} updates.`, "info");
+
+  setTimeout(() => {
+    const current = state.integrations.find(item => item.id === integration.id);
+    if (!current) {
+      setGlobalSyncState(false);
+      return;
+    }
+    current.status = "connected";
+    current.lastSync = new Date().toISOString();
+    state.lastGlobalSync = current.lastSync;
+    addActivity("sync", `<strong>${escapeHtml(current.name)}</strong> sync completed${runMatching ? " and matching reran" : ""}`);
+    addAuditLog("integration.synced", `${current.name} — ${mode}`);
+    saveState();
+    setGlobalSyncState(false);
+    showToast("Sync complete", `${current.name} is current.${runMatching ? " Matching checks finished." : ""}`, "success");
+    renderIntegrations();
+    renderRecentActivity();
+  }, 1800);
+}
+
+function setGlobalSyncState(syncing) {
+  const syncState = document.getElementById("syncState");
+  const syncText = document.getElementById("syncText");
+  syncState.classList.toggle("syncing", syncing);
+  syncText.textContent = syncing ? "Sync in progress" : "All systems synced";
+}
+
+function clearJobFilters() {
+  document.getElementById("jobSearch").value = "";
+  document.getElementById("jobStatusFilter").value = "all";
+  document.getElementById("jobPaymentFilter").value = "all";
+  document.getElementById("jobMatchFilter").value = "all";
+  jobsPage = 1;
+  renderJobsTable();
+}
+
+function exportCsv(rows, filename, columns) {
+  if (!rows.length) {
+    showToast("Nothing to export", "There are no records in the current view.", "warning");
+    return;
+  }
+  const escapeCsv = value => {
+    const text = String(value ?? "");
+    return /[",\n]/.test(text) ? `"${text.replaceAll('"', '""')}"` : text;
+  };
+  const header = columns.map(column => escapeCsv(column.label)).join(",");
+  const body = rows.map(row => columns.map(column => escapeCsv(column.value(row))).join(",")).join("\n");
+  const blob = new Blob([`\uFEFF${header}\n${body}`], { type: "text/csv;charset=utf-8" });
+  const url = URL.createObjectURL(blob);
+  const link = document.createElement("a");
+  link.href = url;
+  link.download = filename;
+  document.body.appendChild(link);
+  link.click();
+  link.remove();
+  setTimeout(() => URL.revokeObjectURL(url), 1000);
+  showToast("CSV downloaded", `${rows.length} records were exported.`, "success");
+}
+
+function exportJobs() {
+  const jobs = getFilteredJobs();
+  exportCsv(jobs, `postback-jobs-${isoDate(0)}.csv`, [
+    { label: "Unified Job ID", value: job => job.id },
+    { label: "Title", value: job => job.title },
+    { label: "Customer", value: job => job.customer },
+    { label: "Address", value: job => job.address },
+    { label: "Completion Date", value: job => job.date },
+    { label: "Technician", value: job => job.technician },
+    { label: "Amount", value: job => job.amount.toFixed(2) },
+    { label: "Payment Status", value: job => job.paymentStatus },
+    { label: "Record Status", value: job => job.status },
+    { label: "Match Quality", value: job => job.matchQuality },
+    { label: "Field Service ID", value: job => job.fieldServiceId },
+    { label: "Invoice Number", value: job => job.invoiceNumber },
+    { label: "CRM ID", value: job => job.crmId },
+    { label: "Accounting ID", value: job => job.accountingId },
+    { label: "Completion Notes", value: job => job.notes }
+  ]);
+}
+
+function exportReport() {
+  const range = Number(document.getElementById("reportRange").value);
+  const cutoff = new Date();
+  cutoff.setHours(0, 0, 0, 0);
+  cutoff.setDate(cutoff.getDate() - range);
+  const jobs = state.jobs.filter(job => new Date(`${job.date}T12:00:00`) >= cutoff);
+  const reportRows = [
+    { category: "Unified jobs", records: jobs.length, value: jobs.reduce((sum, job) => sum + Number(job.amount), 0), status: "Ready" },
+    { category: "Matched jobs", records: jobs.filter(job => job.status === "matched").length, value: jobs.filter(job => job.status === "matched").reduce((sum, job) => sum + Number(job.amount), 0), status: "Ready" },
+    { category: "Outstanding jobs", records: jobs.filter(job => job.paymentStatus !== "paid").length, value: jobs.filter(job => job.paymentStatus !== "paid").reduce((sum, job) => sum + Number(job.amount), 0), status: "Attention" },
+    { category: "Missing invoices", records: jobs.filter(job => !job.invoiceNumber).length, value: jobs.filter(job => !job.invoiceNumber).reduce((sum, job) => sum + Number(job.amount), 0), status: "Attention" },
+    { category: "Open exceptions", records: state.exceptions.filter(item => item.status === "open").length, value: 0, status: "Attention" }
+  ];
+  exportCsv(reportRows, `postback-reconciliation-report-${isoDate(0)}.csv`, [
+    { label: "Category", value: row => row.category },
+    { label: "Records", value: row => row.records },
+    { label: "Value", value: row => row.value.toFixed(2) },
+    { label: "Status", value: row => row.status },
+    { label: "Report Period Days", value: () => range }
+  ]);
+}
+
+function downloadBackup() {
+  const data = JSON.stringify({ exportedAt: new Date().toISOString(), app: "Postback", data: state }, null, 2);
+  const blob = new Blob([data], { type: "application/json" });
+  const url = URL.createObjectURL(blob);
+  const link = document.createElement("a");
+  link.href = url;
+  link.download = `postback-backup-${isoDate(0)}.json`;
+  document.body.appendChild(link);
+  link.click();
+  link.remove();
+  setTimeout(() => URL.revokeObjectURL(url), 1000);
+  addAuditLog("data.backup_downloaded", isoDate(0));
+  saveState();
+  showToast("Backup downloaded", "Your workspace data was exported as JSON.", "success");
+}
+
+function showSaveMessage(form) {
+  const message = form.querySelector("[data-save-message]");
+  if (!message) return;
+  message.classList.remove("hidden");
+  setTimeout(() => message.classList.add("hidden"), 2600);
+}
+
+function saveCompanySettings(event) {
+  event.preventDefault();
+  const form = event.currentTarget;
+  if (!validateForm(form, ["companyName", "timezone", "operationsEmail"])) return;
+  state.company.name = form.elements.companyName.value.trim();
+  state.company.timezone = form.elements.timezone.value;
+  state.company.operationsEmail = form.elements.operationsEmail.value.trim();
+  addAuditLog("settings.company_updated", state.company.name);
+  saveState();
+  showSaveMessage(form);
+  showToast("Company profile saved", "New reports and alerts will use the updated details.", "success");
+}
+
+function saveMatchingSettings(event) {
+  event.preventDefault();
+  state.settings.autoMatchThreshold = Number(event.currentTarget.elements.autoMatchThreshold.value);
+  state.settings.matchFields = event.currentTarget.elements.matchFields.value.trim();
+  state.settings.dateTolerance = Number(event.currentTarget.elements.dateTolerance.value);
+  state.settings.addressMatching = event.currentTarget.elements.addressMatching.checked;
+  addAuditLog("settings.matching_updated", `${state.settings.autoMatchThreshold}% threshold`);
+  saveState();
+  showSaveMessage(event.currentTarget);
+  showToast("Matching rules saved", "They will apply during the next synchronization run.", "success");
+}
+
+function saveAlertSettings(event) {
+  event.preventDefault();
+  const form = event.currentTarget;
+  state.settings.notifyHigh = form.elements.notifyHigh.checked;
+  state.settings.notifyMissingInvoices = form.elements.notifyMissingInvoices.checked;
+  state.settings.notifyDuplicates = form.elements.notifyDuplicates.checked;
+  state.settings.notifyWeekly = form.elements.notifyWeekly.checked;
+  state.settings.alertDigestTime = form.elements.alertDigestTime.value;
+  state.settings.weeklyDay = form.elements.weeklyDay.value;
+  addAuditLog("settings.alerts_updated", state.settings.alertDigestTime);
+  saveState();
+  showSaveMessage(form);
+  showToast("Notification rules saved", "Your alert schedule is up to date.", "success");
+}
+
+function saveDataSettings(event) {
+  event.preventDefault();
+  state.settings.retentionMonths = Number(event.currentTarget.elements.retentionMonths.value);
+  addAuditLog("settings.retention_updated", `${state.settings.retentionMonths} months`);
+  saveState();
+  showSaveMessage(event.currentTarget);
+  showToast("Data settings saved", `${state.settings.retentionMonths} months of records will be retained.`, "success");
+}
+
+function resetWorkspace() {
+  const confirmed = window.confirm("Reset the entire Postback demo workspace? All local changes will be lost.");
+  if (!confirmed) return;
+  const secondConfirmation = window.confirm("This is your final confirmation. Reset all jobs and settings to the original data?");
+  if (!secondConfirmation) return;
+  state = cloneSeedState();
+  localStorage.setItem(STORAGE_KEY, JSON.stringify(state));
+  jobsPage = 1;
+  currentExceptionId = null;
+  currentExceptionStatus = "open";
+  clearJobFilters();
+  populateSettingsForms();
+  updateGlobalCounts();
+  showView("dashboard");
+  showToast("Workspace reset", "Postback was restored to its original demo data.", "success");
+}
+
+function closeSidebar() {
+  document.getElementById("sidebar").classList.remove("open");
+  document.getElementById("sidebarOverlay").classList.remove("visible");
+}
+
+function showNotificationsPopover(button) {
+  const existing = document.getElementById("notificationPopover");
+  if (existing) {
+    existing.remove();
+    button.setAttribute("aria-expanded", "false");
+    return;
+  }
+  const popover = document.createElement("div");
+  popover.id = "notificationPopover";
+  popover.className = "popover";
+  popover.innerHTML = `
+    <div class="popover-header">
+      <h3>Recent alerts</h3>
+      <button id="markNotificationsReadButton">Mark all as read</button>
+    </div>
+    ${state.exceptions.filter(item => item.status === "open").slice(0, 5).map(item => `
+      <div class="notification-item" data-open-exception="${escapeAttr(item.id)}">
+        <span class="status-dot ${item.priority === "high" ? "" : "warning"}"></span>
+        <span>
+          <p>${escapeHtml(item.title)}</p>
+          <span>${escapeHtml(relativeTime(item.createdAt))} · ${escapeHtml(item.type)}</span>
+        </span>
+      </div>
+    `).join("") || '<div class="empty-state" style="min-height:180px"><div><div class="empty-state-icon">'+ICONS.check+'</div><h3>All caught up</h3><p>There are no unread reconciliation alerts.</p></div></div>'}
+  `;
+  document.body.appendChild(popover);
+  button.setAttribute("aria-expanded", "true");
+  popover.querySelector("#markNotificationsReadButton").addEventListener("click", () => {
+    state.notificationsRead = true;
+    document.querySelector(".notification-dot")?.classList.add("hidden");
+    popover.querySelector("#markNotificationsReadButton").textContent = "All read";
+    saveState();
+  });
+  popover.addEventListener("click", event => {
+    const exceptionButton = event.target.closest("[data-open-exception]");
+    if (!exceptionButton) return;
+    popover.remove();
+    button.setAttribute("aria-expanded", "false");
+    showView("exceptions");
+    currentExceptionStatus = "open";
+    currentExceptionId = exceptionButton.dataset.openException;
+    renderExceptions();
+  });
+  setTimeout(() => {
+    document.addEventListener("click", handleOutsidePopover, { once: true });
+  }, 0);
+}
+
+function handleOutsidePopover(event) {
+  const popover = document.getElementById("notificationPopover");
+  const button = document.getElementById("notificationButton");
+  if (!popover) return;
+  if (popover.contains(event.target) || button.contains(event.target)) {
+    document.addEventListener("click", handleOutsidePopover, { once: true });
+    return;
+  }
+  popover.remove();
+  button.setAttribute("aria-expanded", "false");
+}
+
+function bindEvents() {
+  document.querySelectorAll(".nav-item[data-view]").forEach(button => {
+    button.addEventListener("click", () => showView(button.dataset.view));
+  });
+
+  document.addEventListener("click", event => {
+    const goButton = event.target.closest("[data-go]");
+    if (goButton) showView(goButton.dataset.go);
+
+    const openJobButton = event.target.closest("[data-open-job-modal]");
+    if (openJobButton) openJobForm(null, openJobButton);
+
+    const closeButton = event.target.closest("[data-close-modal]");
+    if (closeButton) closeModal(closeButton.dataset.closeModal);
+
+    const editButton = event.target.closest("[data-edit-job]");
+    if (editButton) openJobForm(editButton.dataset.editJob, editButton);
+
+    const viewButton = event.target.closest("[data-view-job]");
+    if (viewButton) openJobDetails(viewButton.dataset.viewJob, viewButton);
+
+    const deleteButton = event.target.closest("[data-delete-job]");
+    if (deleteButton) requestDeleteJob(deleteButton.dataset.deleteJob, deleteButton);
+
+    const selectExceptionButton = event.target.closest("[data-select-exception]");
+    if (selectExceptionButton) {
+      currentExceptionId = selectExceptionButton.dataset.selectException;
+      renderExceptions();
+    }
+
+    const openExceptionButton = event.target.closest("[data-open-exception]");
+    if (openExceptionButton && !document.getElementById("notificationPopover")?.contains(openExceptionButton)) {
+      showView("exceptions");
+      currentExceptionStatus = "open";
+      currentExceptionId = openExceptionButton.dataset.openException;
+      renderExceptions();
+    }
+
+    const resolveButton = event.target.closest("[data-resolve-exception]");
+    if (resolveButton) openResolveModal(resolveButton.dataset.resolveException, resolveButton);
+
+    const ignoreButton = event.target.closest("[data-ignore-exception]");
+    if (ignoreButton) ignoreException(ignoreButton.dataset.ignoreException);
+
+    const reopenButton = event.target.closest("[data-reopen-exception]");
+    if (reopenButton) reopenException(reopenButton.dataset.reopenException);
+
+    const pageButton = event.target.closest("[data-job-page]");
+    if (pageButton && !pageButton.disabled) {
+      jobsPage = Number(pageButton.dataset.jobPage);
+      renderJobsTable();
+    }
+
+    if (event.target.closest("#clearJobFiltersButton")) clearJobFilters();
+    if (event.target.closest("#emptyConnectButton")) openConnectModal(event.target.closest("#emptyConnectButton"));
+
+    const manageButton = event.target.closest("[data-manage-integration]");
+    if (manageButton) openSyncModal(manageButton.dataset.manageIntegration, manageButton);
+
+    const disconnectButton = event.target.closest("[data-disconnect-integration]");
+    if (disconnectButton) disconnectIntegration(disconnectButton.dataset.disconnectIntegration);
+
+    const settingsButton = event.target.closest("[data-settings-target]");
+    if (settingsButton) {
+      document.querySelectorAll("[data-settings-target]").forEach(button => button.classList.toggle("active", button === settingsButton));
+      document.querySelectorAll("#companySettings, #matchingSettings, #alertSettings, #dataSettings").forEach(section => {
+        section.classList.toggle("hidden", section.id !== settingsButton.dataset.settingsTarget);
+      });
+    }
+
+    const exceptionStatusButton = event.target.closest("[data-exception-status]");
+    if (exceptionStatusButton) {
+      document.querySelectorAll("[data-exception-status]").forEach(button => button.classList.toggle("active", button === exceptionStatusButton));
+      currentExceptionStatus = exceptionStatusButton.dataset.exceptionStatus;
+      currentExceptionId = null;
+      renderExceptions();
+    }
+  });
+
+  document.querySelectorAll(".modal-backdrop").forEach(backdrop => {
+    backdrop.addEventListener("mousedown", event => {
+      if (event.target === backdrop) closeModal(backdrop.id);
+    });
+  });
+
+  document.getElementById("mobileMenu").addEventListener("click", () => {
+    document.getElementById("sidebar").classList.add("open");
+    document.getElementById("sidebarOverlay").classList.add("visible");
+  });
+  document.getElementById("sidebarOverlay").addEventListener("click", closeSidebar);
+
+  document.getElementById("jobForm").addEventListener("submit", submitJobForm);
+  document.getElementById("resolveForm").addEventListener("submit", submitResolutionForm);
+  document.getElementById("connectForm").addEventListener("submit", submitConnectForm);
+  document.getElementById("syncForm").addEventListener("submit", submitSyncForm);
+  document.getElementById("companySettingsForm").addEventListener("submit", saveCompanySettings);
+  document.getElementById("matchingSettingsForm").addEventListener("submit", saveMatchingSettings);
+  document.getElementById("alertSettingsForm").addEventListener("submit", saveAlertSettings);
+  document.getElementById("dataSettingsForm").addEventListener("submit", saveDataSettings);
+
+  ["jobTitle", "customerName", "serviceAddress", "completionDate", "technician", "amount", "paymentStatus", "completionNotes"].forEach(fieldName => {
+    const field = document.querySelector(`#jobForm [name="${fieldName}"]`);
+    field?.addEventListener("input", () => {
+      field.classList.remove("invalid");
+      field.removeAttribute("aria-invalid");
+      const error = document.querySelector(`#jobForm [data-error-for="${fieldName}"]`);
+      if (error) error.textContent = "";
+    });
+  });
+
+  ["jobSearch", "jobStatusFilter", "jobPaymentFilter", "jobMatchFilter"].forEach(id => {
+    document.getElementById(id).addEventListener(id === "jobSearch" ? "input" : "change", () => {
+      jobsPage = 1;
+      renderJobsTable();
+    });
+  });
+
+  document.getElementById("exceptionPriorityFilter").addEventListener("change", renderExceptions);
+  document.getElementById("resolveVisibleButton").addEventListener("click", resolveVisibleExceptions);
+  document.getElementById("chartRange").addEventListener("change", renderRevenueChart);
+  document.getElementById("reportRange").addEventListener("change", renderReports);
+  document.getElementById("exportJobsButton").addEventListener("click", exportJobs);
+  document.getElementById("downloadReportButton").addEventListener("click", exportReport);
+  document.getElementById("printReportButton").addEventListener("click", () => window.print());
+  document.getElementById("addIntegrationButton").addEventListener("click", event => openConnectModal(event.currentTarget));
+  document.getElementById("confirmDeleteButton").addEventListener("click", confirmDeleteJob);
+  document.getElementById("backupDataButton").addEventListener("click", downloadBackup);
+  document.getElementById("resetDataButton").addEventListener("click", resetWorkspace);
+
+  document.getElementById("emailAlertsToggle").addEventListener("change", event => {
+    state.settings.emailAlerts = event.currentTarget.checked;
+    addAuditLog("alerts.email_toggled", String(event.currentTarget.checked));
+    saveState();
+    showToast("Email alerts updated", event.currentTarget.checked ? "High-priority email alerts are on." : "Email alerts are off.", "success");
+  });
+
+  document.getElementById("slackAlertsToggle").addEventListener("change", event => {
+    state.settings.slackAlerts = event.currentTarget.checked;
+    addAuditLog("alerts.slack_toggled", String(event.currentTarget.checked));
+    saveState();
+    showToast("Slack alerts updated", event.currentTarget.checked ? "Slack alerts are on." : "Slack alerts are off.", "success");
+  });
+
+  document.getElementById("notificationButton").addEventListener("click", event => {
+    event.stopPropagation();
+    showNotificationsPopover(event.currentTarget);
+  });
+
+  document.getElementById("profileButton").addEventListener("click", () => {
+    showToast("Signed in as Jordan", "You’re the operations administrator for Northstar Services.", "info");
+  });
+
+  document.getElementById("companySwitcher").addEventListener("click", () => {
+    showToast("Northstar Services", "This local prototype includes one company workspace.", "info");
+  });
+
+  document.getElementById("dashboardDateButton").addEventListener("click", () => {
+    showToast("Current reporting period", "Dashboard metrics cover the current 30-day reconciliation window.", "info");
+  });
+
+  document.addEventListener("keydown", event => {
+    if (event.key === "Escape") {
+      const openModalElement = document.querySelector(".modal-backdrop:not(.hidden)");
+      if (openModalElement) {
+        closeModal(openModalElement.id);
+      } else {
+        document.getElementById("notificationPopover")?.remove();
+        document.getElementById("notificationButton").setAttribute("aria-expanded", "false");
+        closeSidebar();
+      }
+    }
+  });
+}
+
+function initializeApp() {
+  bindEvents();
+  populateSettingsForms();
+  updateGlobalCounts();
+  renderDashboard();
+  if (state.notificationsRead) document.querySelector(".notification-dot")?.classList.add("hidden");
+  const connectedSyncs = state.integrations.some(integration => integration.status === "syncing");
+  if (connectedSyncs) {
+    setGlobalSyncState(true);
+    setTimeout(() => setGlobalSyncState(false), 1600);
+  }
+}
+
+initializeApp();
+</script>
+</body>
+</html>
